@@ -3,4 +3,4 @@ project(Project1)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Project1 main.cpp cmake-build-debug/Administrator.cpp cmake-build-debug/Administrator.h)
+add_executable(Project1 main.cpp Users.cpp Users.h Administrator.cpp Administrator.h MainWindow.cpp MainWindow.h Buyers.cpp Buyers.h Sellers.cpp Sellers.h InfoManager.cpp InfoManager.h common.h)
