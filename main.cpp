@@ -153,29 +153,7 @@ void manage_choose_Admin(string& cmd)
 void manage_choose_UI(string& choose)
 {
     string cmd; //选择命令
-    if(choose == "1") //用户登录
-    {
-        // 1.注销登录 2.我是买家 3.我是卖家 4.个人信息管理
-        Users my_user;
-        if(my_user.check_pass())
-        {
-            my_user.display_cmd(); //展示用户主界面
-            cin >> cmd;
-            while(cmd != "1") //1表示注销登录
-            {
-                manage_choose_User(cmd);
-                my_user.display_cmd();
-                cin >> cmd;
-            }
-            cout << "您已经成功注销用户登录" << endl;
-        }
-
-    }
-    else if(choose == "2") //用户注册
-    {
-
-    }
-    else if(choose == "3") //管理员登录
+    if(choose == "1") //管理员登录
     {
         //1.查看所有商品 2.搜索商品 3.查看所有订单 4.查看所有用户 5.删除用户 6.下架商品 7.注销
         Administrator my_admin;
@@ -193,6 +171,28 @@ void manage_choose_UI(string& choose)
         }
 
     }
+    else if(choose == "2") //用户注册
+    {
+
+    }
+    else if(choose == "3") //用户登录
+    {
+        // 1.注销登录 2.我是买家 3.我是卖家 4.个人信息管理
+        Users my_user;
+        if(my_user.check_pass())
+        {
+            my_user.display_cmd(); //展示用户主界面
+            cin >> cmd;
+            while(cmd != "1") //1表示注销登录
+            {
+                manage_choose_User(cmd);
+                my_user.display_cmd();
+                cin >> cmd;
+            }
+            cout << "您已经成功注销用户登录" << endl;
+        }
+
+    }
     else // 非法输入
     {
         cout << "没有这个功能，请输入上述展示功能对应的数字!" << endl;
@@ -203,7 +203,7 @@ void manage_choose_UI(string& choose)
 int main() {
     MainWindow UI;
     string choose;
-    //1.用户登录 2.用户注册 3.管理员登录 4.退出程序
+    //1.管理员登录 2.用户注册 3.用户登录 4.退出程序
     UI.cmd_display(); //展示主界面菜单
     cin >> choose;
     while(choose != "4") //4退出程序

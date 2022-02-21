@@ -12,6 +12,10 @@ using namespace std;
 // 管理员类
 class Administrator {
 public:
+    string admin_name;
+    string admin_pass;
+    string sql_cmd; //选择功能中间生成的SQL命令
+public:
     Administrator();
 
     bool check_pass();   //检测密码

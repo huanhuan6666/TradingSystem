@@ -1,12 +1,19 @@
 //
 // Created by Administrator on 2022/2/21.
 //
-
+/*
+ * 这个头文件包含一些通用的内容，比如各种文件路径，一些结构体和实用函数的定义
+*/
 #ifndef PROJECT1_COMMON_H
 #define PROJECT1_COMMON_H
 #include <string>
 
 using namespace std;
+//通用的文件名
+const string commodity_file = "commodity.txt";
+const string commands_file = "commands.txt";
+const string order_file = "order.txt";
+const string user_file = "user.txt";
 
 //商品和订单我们只关注其数据，因此表示成结构体就可以
 struct Order_t
