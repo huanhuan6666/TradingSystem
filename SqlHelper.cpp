@@ -29,7 +29,7 @@ void SqlHelper::sql_analyse(const string &cmd) {
                 string option, value;
                 if(str_table[4] != "WHERE")
                 {
-                    cout << "Usage: 无法解析命令 " << cmd << " error: " << str_table[4] << endl;
+                    cout << "Usage: 无法解析命令 " << cmd << " 可能的格式error: " << str_table[4] << endl;
                     return ;
                 }
                 option = str_table[5];
@@ -40,7 +40,7 @@ void SqlHelper::sql_analyse(const string &cmd) {
                     show_commodity(2, option, value);
                 else //除了CONTAINS 和 = 以外的
                 {
-                    cout << "Usage: 无法解析命令 " << cmd << " error: " << str_table[6] << endl;
+                    cout << "Usage: 无法解析命令 " << cmd << " 可能的格式error: " << str_table[6] << endl;
                     return ;
                 }
             }
@@ -55,6 +55,10 @@ void SqlHelper::sql_analyse(const string &cmd) {
         {
                 show_order(0, "", "");
         }
+        else //没有这个表
+        {
+            cout << "Usage: 不支持的表项 " << where;
+        }
     }
     else if(first == "INSERT")
     {
@@ -62,7 +66,29 @@ void SqlHelper::sql_analyse(const string &cmd) {
     }
     else if(first == "UPDATE")
     {
+        if(str_table[2] != "SET" || str_table[4] != "=" || str_table[6] != "WHERE" || str_table[8] != "=")
+        {
+            cout << "Usage: 无法解析命令 " << cmd << " 可能的格式error: "
+                << str_table[2] << " " << str_table[4] << " " << str_table[6] << " " << str_table[8] << endl;
+            return ;
+        }
+        string where = str_table[1];
+        string tobe_option = str_table[3];
+        string tobe_value = str_table[5];
+        string option = str_table[7];
+        string value = str_table[9];
+        if(where == "user")
+        {
+            update_user(0, option, value, tobe_option, tobe_value);
+        }
+        else if(where == "commonity")
+        {
 
+        }
+        else //
+        {
+            cout << "Usage: 不支持的表项 " << where << endl;
+        }
     }
     else if(first == "DELETE")
     {
@@ -70,7 +96,7 @@ void SqlHelper::sql_analyse(const string &cmd) {
     }
     else
     {
-        cout << "Usage: 无法解析命令 " << first << "...相关操作未达成" << endl;
+        cout << "Usage: 无法解析命令 " << first << " ...相关操作未达成" << endl;
         return;
     }
 

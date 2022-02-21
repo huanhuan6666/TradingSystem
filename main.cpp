@@ -32,7 +32,7 @@ void manage_choose_Buyer(string& cmd)
     }
     else //异常输入
     {
-
+        cout << "没有这个功能，请输入上述展示功能对应的数字!" << endl;
     }
 }
 
@@ -60,7 +60,7 @@ void manage_choose_Seller(string& cmd)
     }
     else //异常输入
     {
-
+        cout << "没有这个功能，请输入上述展示功能对应的数字!" << endl;
     }
 
 }
@@ -112,13 +112,13 @@ void manage_choose_User(string& cmd)
     }
     else //异常输入
     {
-
+        cout << "没有这个功能，请输入上述展示功能对应的数字!" << endl;
     }
 
 }
 void manage_choose_Admin(string& cmd, Administrator &admin)
 {
-//1.查看所有商品 2.搜索商品 3.查看所有订单 4.查看所有用户 5.删除用户 6.下架商品 7.注销
+//1.查看所有商品 2.搜索商品 3.查看所有订单 4.查看所有用户 5.封禁用户 6.下架商品 7.注销
     if(cmd == "1") //查看所有商品
     {
         admin.display_all_goods();
@@ -135,9 +135,9 @@ void manage_choose_Admin(string& cmd, Administrator &admin)
     {
         admin.display_all_users();
     }
-    else if(cmd == "5") //删除用户
+    else if(cmd == "5") //封禁用户
     {
-
+        admin.block_users();
     }
     else if(cmd == "6") //下架商品
     {
@@ -145,7 +145,7 @@ void manage_choose_Admin(string& cmd, Administrator &admin)
     }
     else //非法输入
     {
-
+        cout << "没有这个功能，请输入上述展示功能对应的数字!" << endl;
     }
 
 }

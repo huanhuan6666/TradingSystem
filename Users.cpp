@@ -30,3 +30,9 @@ void Users::display_cmd() {
 
 }
 
+ostream &operator<<(ostream& out, Users &u)
+{
+    out << u.m_id << ',' << u.m_name << ',' << u.m_pass << ',' << u.m_tel << ','
+        << u.m_addr << ',' << u.m_money << ',' << u.m_state << endl;
+    return out;
+}

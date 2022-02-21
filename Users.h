@@ -10,6 +10,7 @@ using namespace std;
 
 //User为基类，买家和卖家需要重写一些接口
 class Users {
+    friend ostream &operator<<(ostream& out, Users &u); //重载<<便于文件输出
 public:
     string m_id; //用户ID
     string m_name;  //用户姓名
