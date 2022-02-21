@@ -9,8 +9,11 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
+#include "Users.h"
+
 using namespace std;
 //通用的文件名
 const string commodity_file = "commodity.txt";
@@ -21,12 +24,23 @@ const string user_file = "user.txt";
 //商品和订单我们只关注其数据，因此表示成结构体就可以
 struct Order_t
 {
-    string o_id; //订单ID
-    string c_id; //商品ID
-    float o_price; //交易单价
-    int o_count; //数量
-    string o_time; //交易时间
-    string m_id; //卖家ID
+    Order_t(vector<string> &each)
+    {
+        o_id        =  each[0];
+        c_id        =  each[1];
+        o_price     =  stof(each[2]);
+        o_count     =  stoi(each[3]);
+        o_time      =  each[4];
+        m_id        =  each[5];
+        m_buy_id    =  each[6];
+    }
+    string  o_id; //订单ID
+    string  c_id; //商品ID
+    float   o_price; //交易单价
+    int     o_count; //数量
+    string  o_time; //交易时间
+    string  m_id; //卖家ID
+    string  m_buy_id; //买家ID
 };
 
 struct Commodity_t
@@ -42,14 +56,14 @@ struct Commodity_t
         c_time  = each[6];
         c_state = each[7];
     }
-    string c_id; //商品ID
-    string c_name; //商品名称
-    float c_price; //商品价格
-    int c_count; //数量
-    string c_des; //描述
-    string m_id;  //卖家ID
-    string c_time; //上架时间
-    string c_state; //商品状态
+    string  c_id; //商品ID
+    string  c_name; //商品名称
+    float   c_price; //商品价格
+    int     c_count; //数量
+    string  c_des; //描述
+    string  m_id;  //卖家ID
+    string  c_time; //上架时间
+    string  c_state; //商品状态
 };
 
 //将字符串cmd按照字符pattern分隔，将结果存放到res中
@@ -65,8 +79,10 @@ inline void my_split(const string &cmd, const char &pattern, vector<string>& res
     }
 }
 
+//TODO: 下面这几个show函数大同小异，有时间可以考虑写成函数模板
+
 //展示商品表中 选项option 含有 值value的条目
-//为了让接口更紧把展示全部也合并进来了,type == 0表示展示全部，非0表示有额外条件
+//为了让接口更紧把展示全部也合并进来了,type == 0表示展示全部,=1表示值相等,=2表示有CONTAINS包含条件
 inline void show_commodity(int type, const string& option, const string& value)
 {
     vector<Commodity_t> res;
@@ -97,8 +113,14 @@ inline void show_commodity(int type, const string& option, const string& value)
             my_split(line, ',', each); //用,分隔commodity文件中的每一行填充each
             Commodity_t tmp(each);
             if(option == "名称"){
-                if(tmp.c_name == value)
-                    res.push_back(tmp); //添加该商品到res中
+                if(type == 1) {//值相等条件，即强匹配搜索
+                    if (tmp.c_name == value)
+                        res.push_back(tmp); //添加该商品到res中
+                }
+                else if(type == 2) { //CONTAINS包含字串
+                    if(tmp.c_name.find(value) != -1)
+                        res.push_back(tmp);
+                }
             }
             else if(option == "商品ID"){
                 if(tmp.c_id == value)
@@ -116,7 +138,7 @@ inline void show_commodity(int type, const string& option, const string& value)
         }
     }
 
-    cout << "*******************************************************************" << endl;
+    cout << endl << "*******************************************************************" << endl;
     cout << "商品ID   名称      价格      上架时间       卖家ID    数量       商品状态" << endl;
     for(auto com : res)
     {
@@ -128,4 +150,82 @@ inline void show_commodity(int type, const string& option, const string& value)
 
 }
 
+//和show_commodity类似，不过目前只实现了展示所有用户的功能，即type==0，后续可能补条件搜索
+inline void show_user(int type, const string& option, const string& value)
+{
+    vector<Users> res; //这里的Users用的是class类
+    ifstream fin(user_file);
+    if(!fin)
+    {
+        cout << "Error: open file failed! " << user_file;
+        return;
+    }
+    string line;
+    getline(fin, line); //第一行表头
+    //cout << line;
+    if(type == 0)  //显示所有条目
+    {
+        while(getline(fin, line))
+        {
+            vector<string> each;
+            my_split(line, ',', each); //用,分隔user_file文件中的每一行填充each
+            Users tmp(each);
+            res.push_back(tmp); //添加该商品到res中
+        }
+    }
+    else
+    {
+        //待补
+    }
+    cout << endl << "*************************************************************" << endl;
+    cout << "用户ID   用户名      联系方式      地址       钱包余额     用户状态" << endl;
+    for(auto user : res)
+    {
+        cout<<setiosflags(ios::fixed);
+        cout << user.m_id << '\t' << user.m_name << '\t' << user.m_tel << '\t'
+             << user.m_addr << '\t' << setprecision(1) << user.m_money << '\t' << user.m_state << endl;
+    }
+    cout << "**************************************************************" << endl;
+    fin.close();
+}
+
+//展示订单的函数，同样也只实现了type==0展示全部条目
+inline void show_order(int type, const string& option, const string& value)
+{
+    vector<Order_t> res; //这里的Users用的是class类
+    ifstream fin(order_file);
+    if(!fin)
+    {
+        cout << "Error: open file failed! " << user_file;
+        return;
+    }
+    string line;
+    getline(fin, line); //第一行表头
+    //cout << line;
+    if(type == 0)  //显示所有条目
+    {
+        while(getline(fin, line))
+        {
+            vector<string> each;
+            my_split(line, ',', each); //用,分隔user_file文件中的每一行填充each
+            Order_t tmp(each);
+            res.push_back(tmp); //添加该商品到res中
+        }
+    }
+    else
+    {
+        //待补
+    }
+
+    cout << endl << "************************************************************"  << endl;
+    cout << "订单ID     商品ID   交易单价   数量   交易时间    买家ID   卖家ID" << endl;
+    for(auto odr : res)
+    {
+        cout<<setiosflags(ios::fixed);
+        cout << odr.o_id << '\t' << odr.c_id << '\t' << setprecision(1) << odr.o_price << '\t'
+             << odr.o_count << '\t' << odr.o_time << '\t' << odr.m_buy_id << '\t' << odr.m_id << endl;
+    }
+    cout << "************************************************************" << endl;
+    fin.close();
+}
 #endif //PROJECT1_COMMON_H

@@ -14,3 +14,7 @@ void Sellers::display_cmd(){
     cout << endl << "输入操作: " ;
 
 }
+
+Sellers::Sellers() {
+    ;
+}

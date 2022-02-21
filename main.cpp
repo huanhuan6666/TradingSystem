@@ -125,15 +125,15 @@ void manage_choose_Admin(string& cmd, Administrator &admin)
     }
     else if(cmd == "2") //搜索商品
     {
-
+        admin.search_goods();
     }
     else if(cmd == "3") //查看所有订单
     {
-
+        admin.display_all_orders();
     }
     else if(cmd == "4") //查看所有用户
     {
-
+        admin.display_all_users();
     }
     else if(cmd == "5") //删除用户
     {

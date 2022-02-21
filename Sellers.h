@@ -8,6 +8,7 @@
 
 class Sellers : public Users{
 public:
+    Sellers();
     void display_cmd() override;
 };
 
