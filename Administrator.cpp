@@ -24,22 +24,26 @@ void Administrator::search_goods() {
     cout << "请输入商品名称: ";
     cin >> com_name;
     sql_cmd = "SELECT * FROM commodity WHERE 名称 CONTAINS " + com_name;
-
+    cout << "对应SQL命令为: " << sql_cmd << endl;
+    m_sql_helper.sql_analyse(sql_cmd);
 }
 
 void Administrator::display_all_goods() {
     sql_cmd = "SELECT * FROM commodity";
-
+    cout << "对应SQL命令为: " << sql_cmd << endl;
+    m_sql_helper.sql_analyse(sql_cmd);
 }
 
 void Administrator::display_all_users() {
     sql_cmd = "SELECT * FROM user";
-
+    cout << "对应SQL命令为: " << sql_cmd << endl;
+    m_sql_helper.sql_analyse(sql_cmd);
 }
 
 void Administrator::display_all_orders() {
     sql_cmd = "SELECT * FROM order";
-
+    cout << "对应SQL命令为: " << sql_cmd << endl;
+    m_sql_helper.sql_analyse(sql_cmd);
 }
 
 void Administrator::off_the_shelf() {
@@ -47,7 +51,8 @@ void Administrator::off_the_shelf() {
     cout << "请输入要下架的商品ID: ";
     cin >> com_id;
     sql_cmd = "UPDATE commodity SET 商品状态 = 已下架 WHERE 商品ID = " + com_id;
-
+    cout << "对应SQL命令为: " << sql_cmd << endl;
+    m_sql_helper.sql_analyse(sql_cmd);
 }
 
 void Administrator::block_users() {
@@ -56,8 +61,9 @@ void Administrator::block_users() {
     cin >> user_id;
     sql_cmd = "UPDAE commodity SET 商品状态 = 已下架 WHERE 卖家ID = " + user_id;
     //TODO: 解析sql命令并且执行
+    m_sql_helper.sql_analyse(sql_cmd);
     sql_cmd = "UPDATE user SET 用户状态 = 封禁 WHERE 用户ID = " + user_id;
-
+    m_sql_helper.sql_analyse(sql_cmd);
 }
 
 bool Administrator::check_pass() {

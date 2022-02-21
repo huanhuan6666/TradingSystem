@@ -6,6 +6,7 @@
 #define PROJECT1_ADMINISTRATOR_H
 
 #include <iostream>
+#include "SqlHelper.h"
 
 using namespace std;
 
@@ -15,6 +16,7 @@ public:
     string admin_name;
     string admin_pass;
     string sql_cmd; //选择功能中间生成的SQL命令
+    SqlHelper m_sql_helper; //用来解析sql语句的对象
 public:
     Administrator();
 

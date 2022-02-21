@@ -116,12 +116,12 @@ void manage_choose_User(string& cmd)
     }
 
 }
-void manage_choose_Admin(string& cmd)
+void manage_choose_Admin(string& cmd, Administrator &admin)
 {
 //1.查看所有商品 2.搜索商品 3.查看所有订单 4.查看所有用户 5.删除用户 6.下架商品 7.注销
     if(cmd == "1") //查看所有商品
     {
-
+        admin.display_all_goods();
     }
     else if(cmd == "2") //搜索商品
     {
@@ -163,7 +163,7 @@ void manage_choose_UI(string& choose)
             cin >> cmd;
             while(cmd != "7") //注销管理员
             {
-                manage_choose_Admin(cmd);
+                manage_choose_Admin(cmd, my_admin);
                 my_admin.cmd_display(); //展示管理员界面
                 cin >> cmd;
             }
