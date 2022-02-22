@@ -366,12 +366,12 @@ inline void rm_rename(const char *newname, const char *oldname)
 {
     if (remove(newname) != 0)
     {
-        cout << "Error: remove old file error!";
+        cout << "Error: remove old file error!" << endl;
         return;
     }
     if (rename(oldname, newname) != 0)
     {
-        cout << "Error: rename temp file error!";
+        cout << "Error: rename temp file error!" << endl;
         return ;
     }
 }

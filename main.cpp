@@ -16,7 +16,7 @@ void manage_choose_Buyer(string& cmd, Buyers& buyer)
     }
     else if(cmd == "2") //购买商品
     {
-
+        //TODO: 买家购买商品以及计算器的实现
     }
     else if(cmd == "3") //搜索商品
     {
@@ -40,7 +40,7 @@ void manage_choose_Seller(string& cmd, Sellers& seller)
 {
     if(cmd == "1") //发布商品
     {
-        seller.release_good(); //TODO: INSERT指令的解析
+        seller.release_good(); //TODO: 卖家发布商品INSERT指令的解析
     }
     else if(cmd == "2") //查看发布商品
     {
@@ -73,7 +73,7 @@ void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
     }
     else if (cmd == "2")
     {
-
+        info_mag.update_my_info();
     }
     else if(cmd == "3")
     {
@@ -118,7 +118,7 @@ void manage_choose_User(string& cmd, Users &my_user)
     else if(cmd == "4") //个人信息管理
     {
         //1.查看信息 2.修改信息 3.充值 4.返回用户
-        InfoManager info_mag;
+        InfoManager info_mag(my_user); //需要向信息管理器传入使用它的User
         info_mag.display_cmd();
         cin >> choose;
         while(choose != "4") //退出到用户主界面
@@ -192,7 +192,7 @@ void manage_choose_UI(string& choose)
     }
     else if(choose == "2") //用户注册
     {
-
+        //TODO:用户注册, INSERT指令的实现
     }
     else if(choose == "3") //用户登录
     {

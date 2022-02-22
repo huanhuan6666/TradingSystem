@@ -59,14 +59,18 @@ void Sellers::update_my_good() {
         sout << setprecision(1) << p;
         sql_cmd = "UPDATE commodity SET 价格 = " + sout.str() + " WHERE 商品ID = " + com_id;
     }
-    else //tmp == 2
+    else if(tmp == "2")//tmp == 2
     {
         string des;
         cout << "请输入被修改商品的描述(超过100个字符部分将被截断): ";
         cin >> des;
         sql_cmd = "UPDATE commodity SET 描述 = " + des.substr(0, 99) + " WHERE 商品ID = " + com_id;
     }
-
+    else //异常输入
+    {
+        cout << "没有这个功能，请输入上述展示功能对应的数字!" << endl;
+        return ;
+    }
     cout << "对应SQL命令为: " << sql_cmd << endl;
     m_sql_helper.sql_analyse(sql_cmd);
 }
