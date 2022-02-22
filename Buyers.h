@@ -12,6 +12,7 @@ using namespace std;
 class Buyers : public Users{
 public:
     Buyers();
+    Buyers(Users &u);
     void display_cmd() override;
 
 };

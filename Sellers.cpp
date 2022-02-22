@@ -18,3 +18,36 @@ void Sellers::display_cmd(){
 Sellers::Sellers() {
     ;
 }
+
+Sellers::Sellers(Users &u) {
+    m_id    =  u.m_id   ;
+    m_name  =  u.m_name ;
+    m_pass  =  u.m_pass ;
+    m_tel   =  u.m_tel  ;
+    m_addr  =  u.m_addr ;
+    m_money =  u.m_money;
+    m_state =  u.m_state;
+    m_sql_helper.user_id = m_id;
+}
+
+void Sellers::release_good() {
+
+}
+
+void Sellers::display_my_good() {
+    string sql_cmd = "SELECT * FROM commodity";
+    cout << "对应SQL命令为: " << sql_cmd << endl;
+    m_sql_helper.sql_analyse(sql_cmd);
+}
+
+void Sellers::update_my_good() {
+
+}
+
+void Sellers::off_my_shelf() {
+
+}
+
+void Sellers::display_my_order() {
+
+}

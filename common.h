@@ -3,6 +3,7 @@
 //
 /*
  * 这个头文件包含一些通用的内容，比如各种文件路径，一些结构体和实用函数的定义
+ * 比如用来辅助SqlHelper解析和执行命令的各种函数
 */
 #ifndef PROJECT1_COMMON_H
 #define PROJECT1_COMMON_H
@@ -94,8 +95,10 @@ inline void my_split(const string &cmd, const char &pattern, vector<string> &res
 
 //TODO: 下面这几个show函数大同小异，有时间可以考虑写成函数模板
 
-//展示商品表中 选项option 含有 值value的条目
-//为了让接口更紧把展示全部也合并进来了,type == 0表示展示全部,=1表示值相等,=2表示有CONTAINS包含条件
+//展示商品表中的条目
+//为了让接口更紧把管理员和用户的展示都合并进来了
+//管理员模式: type == 0表示展示全部,=1表示值相等,=2表示有CONTAINS包含条件
+//卖家模式: type==3表示展示某个 卖家ID 的条目, value需要传入卖家ID
 inline void show_commodity(int type, const string &option, const string &value) {
     vector<Commodity_t> res;
     ifstream fin(commodity_file);
@@ -106,7 +109,7 @@ inline void show_commodity(int type, const string &option, const string &value) 
     string line;
     getline(fin, line); //第一行表头
     //cout << line;
-    if (type == 0)  //显示所有条目
+    if (type == 0)  //管理员 显示所有条目
     {
         while (getline(fin, line)) {
             vector<string> each;
@@ -114,7 +117,8 @@ inline void show_commodity(int type, const string &option, const string &value) 
             Commodity_t tmp(each);
             res.push_back(tmp); //添加该商品到res中
         }
-    } else //带有额外条件的
+    }
+    else if(type == 1 || type == 2)//管理员 带有额外条件的
     {
         while (getline(fin, line)) {
             vector<string> each;
@@ -124,7 +128,7 @@ inline void show_commodity(int type, const string &option, const string &value) 
                 if (type == 1) {//值相等条件，即强匹配搜索
                     if (tmp.c_name == value)
                         res.push_back(tmp); //添加该商品到res中
-                } else if (type == 2) { //CONTAINS包含字串
+                } else { //CONTAINS包含字串
                     if (tmp.c_name.find(value) != -1)
                         res.push_back(tmp);
                 }
@@ -141,16 +145,29 @@ inline void show_commodity(int type, const string &option, const string &value) 
             }
         }
     }
+    else if(type == 3) //用户模式下展示该用户ID的条目
+    {
+        while (getline(fin, line)) {
+            vector<string> each;
+            my_split(line, ',', each); //用,分隔commodity文件中的每一行填充each
+            Commodity_t tmp(each);
+            if (tmp.m_id == value) //调用时value需要传入该用户ID
+                res.push_back(tmp);
+        }
+    }
     if(res.empty())
     {
+        //可以根据type的不同展示不同的输出
+        //if(type < 3) { //管理员模式
         cout << "*****************************" << endl;
-        cout << "没有找到您想要的商品！返回初始界面"  << endl;
+        cout << "没有找到您想要的商品！返回初始界面" << endl;
         cout << "*****************************" << endl;
+        //}
         goto END;
     }
     cout << endl << "*******************************************************************" << endl;
     cout << "商品ID   名称      价格      上架时间       卖家ID    数量       商品状态" << endl;
-    for (auto com: res) {
+    for (const auto& com: res) {
         cout << com.c_id << '\t' << com.c_name << '\t' << com.c_price << '\t'
              << com.c_time << '\t' << com.m_id << '\t' << com.c_count << '\t' << com.c_state << endl;
     }
@@ -158,7 +175,7 @@ inline void show_commodity(int type, const string &option, const string &value) 
 
 END:
     fin.close();
-
+    return;
 }
 
 //和show_commodity类似，不过目前只实现了展示所有用户的功能，即type==0，后续可能补条件搜索
@@ -180,7 +197,8 @@ inline void show_user(int type, const string &option, const string &value) {
             Users tmp(each);
             res.push_back(tmp); //添加该商品到res中
         }
-    } else {
+    }
+    else {
         //待补
     }
     if(res.empty())
@@ -192,7 +210,7 @@ inline void show_user(int type, const string &option, const string &value) {
     }
     cout << endl << "*************************************************************" << endl;
     cout << "用户ID   用户名      联系方式      地址       钱包余额     用户状态" << endl;
-    for (auto user: res) {
+    for (const auto& user: res) {
         cout << setiosflags(ios::fixed);
         cout << user.m_id << '\t' << user.m_name << '\t' << user.m_tel << '\t'
              << user.m_addr << '\t' << setprecision(1) << user.m_money << '\t' << user.m_state << endl;
@@ -200,9 +218,13 @@ inline void show_user(int type, const string &option, const string &value) {
     cout << "**************************************************************" << endl;
 END:
     fin.close();
+    return;
 }
 
-//展示订单的函数，同样也只实现了type==0展示全部条目
+//展示订单的函数，同样也只实现了type==0展示全部条目, 待补
+//管理员模式: type == 0展示全部条目
+//卖家模式: type == 3展示自己作为卖家的订单, value需要传入卖家ID
+//卖家模式: type == 6展示自己作为卖家的订单, value需要传入买家ID
 inline void show_order(int type, const string &option, const string &value) {
     vector<Order_t> res; //这里的Users用的是class类
     ifstream fin(order_file);
@@ -221,7 +243,28 @@ inline void show_order(int type, const string &option, const string &value) {
             Order_t tmp(each);
             res.push_back(tmp); //添加该商品到res中
         }
-    } else {
+    }
+    else if(type == 3) //卖家模式展示自己作为卖家的订单
+    {
+        while (getline(fin, line)) {
+            vector<string> each;
+            my_split(line, ',', each);
+            Order_t tmp(each);
+            if(tmp.m_id == value) //value是调用时传入的卖家ID
+                res.push_back(tmp);
+        }
+    }
+    else if(type == 6) //买家模式展示自己作为卖家的订单
+    {
+        while (getline(fin, line)) {
+            vector<string> each;
+            my_split(line, ',', each);
+            Order_t tmp(each);
+            if(tmp.m_buy_id == value) //value是调用时传入的买家ID
+                res.push_back(tmp);
+        }
+    }
+    else {
         //待补
     }
     if(res.empty())
@@ -233,7 +276,7 @@ inline void show_order(int type, const string &option, const string &value) {
     }
     cout << endl << "************************************************************" << endl;
     cout << "订单ID     商品ID   交易单价   数量   交易时间    买家ID   卖家ID" << endl;
-    for (auto odr: res) {
+    for (const auto& odr: res) {
         cout << setiosflags(ios::fixed);
         cout << odr.o_id << '\t' << odr.c_id << '\t' << setprecision(1) << odr.o_price << '\t'
              << odr.o_count << '\t' << odr.o_time << '\t' << odr.m_buy_id << '\t' << odr.m_id << endl;
@@ -241,6 +284,7 @@ inline void show_order(int type, const string &option, const string &value) {
     cout << "************************************************************" << endl;
 END:
     fin.close();
+    return ;
 }
 
 //删除旧文件并改名新文件，辅助下面的update函数

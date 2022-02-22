@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void manage_choose_Buyer(string& cmd)
+void manage_choose_Buyer(string& cmd, Buyers& buyer)
 {
     if(cmd == "1") //查看商品列表
     {
@@ -36,7 +36,7 @@ void manage_choose_Buyer(string& cmd)
     }
 }
 
-void manage_choose_Seller(string& cmd)
+void manage_choose_Seller(string& cmd, Sellers& seller)
 {
     if(cmd == "1") //发布商品
     {
@@ -44,7 +44,7 @@ void manage_choose_Seller(string& cmd)
     }
     else if(cmd == "2") //查看发布商品
     {
-
+        seller.display_my_good();
     }
     else if(cmd == "3") //修改商品信息
     {
@@ -65,18 +65,37 @@ void manage_choose_Seller(string& cmd)
 
 }
 
-void manage_choose_User(string& cmd)
+void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
+    //1.查看信息 2.修改信息 3.充值 4.返回用户
+    if (cmd == "1")
+    {
+
+    }
+    else if (cmd == "2")
+    {
+
+    }
+    else if(cmd == "3")
+    {
+
+    }
+    else //异常输入
+    {
+        cout << "没有这个功能，请输入上述展示功能对应的数字!" << endl;
+    }
+}
+void manage_choose_User(string& cmd, Users &my_user)
 {
     string choose;
     if(cmd == "2") //我是买家
     {
         //1.查看商品列表 2.购买商品 3.搜索商品 4.查看历史订单 5.查看商品详细信息 6.返回用户主界面
-        Buyers my_buyer;
+        Buyers my_buyer(my_user); //通过User初始化Buyer，Buyer从User继承了用户的数据
         my_buyer.display_cmd(); //展示买家主界面
         cin >> choose;
         while(choose != "6") //退出到用户主界面
         {
-            manage_choose_Buyer(choose);
+            manage_choose_Buyer(choose, my_buyer);
             my_buyer.display_cmd();
             cin >> choose;
         }
@@ -85,12 +104,12 @@ void manage_choose_User(string& cmd)
     else if(cmd == "3") //我是卖家
     {
         //1.发布商品 2.查看发布商品 3.修改商品信息 4.下架商品 5.查看历史订单 6.返回用户主界面
-        Sellers my_seller;
+        Sellers my_seller(my_user);
         my_seller.display_cmd(); //展示买家主界面
         cin >> choose;
         while(choose != "6") //退出到用户主界面
         {
-            manage_choose_Seller(choose);
+            manage_choose_Seller(choose, my_seller);
             my_seller.display_cmd();
             cin >> choose;
         }
@@ -104,7 +123,7 @@ void manage_choose_User(string& cmd)
         cin >> choose;
         while(choose != "4") //退出到用户主界面
         {
-            manage_choose_Seller(choose);
+            manage_choose_InfoManager(choose, info_mag);
             info_mag.display_cmd();
             cin >> choose;
         }
@@ -179,13 +198,13 @@ void manage_choose_UI(string& choose)
     {
         // 1.注销登录 2.我是买家 3.我是卖家 4.个人信息管理
         Users my_user;
-        if(my_user.check_pass())
+        if(my_user.check_pass()) //登录成功则my_user表示确定的用户
         {
             my_user.display_cmd(); //展示用户主界面
             cin >> cmd;
             while(cmd != "1") //1表示注销登录
             {
-                manage_choose_User(cmd);
+                manage_choose_User(cmd, my_user);
                 my_user.display_cmd();
                 cin >> cmd;
             }
