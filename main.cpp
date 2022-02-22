@@ -48,11 +48,11 @@ void manage_choose_Seller(string& cmd, Sellers& seller)
     }
     else if(cmd == "3") //修改商品信息
     {
-
+        seller.update_my_good();
     }
-    else if(cmd == "4") //下加商品
+    else if(cmd == "4") //下架商品
     {
-
+        seller.off_my_shelf();
     }
     else if(cmd == "5") //查看历史订单
     {

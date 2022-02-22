@@ -110,7 +110,7 @@ UserSqlHelper::UserSqlHelper(string &id) {
 //还有用户状态下的INSERT命令就需要大写特写了
 void UserSqlHelper::sql_analyse(const string &cmd) {
     my_split(cmd, ' ', str_table); //用空格分隔cmd并填充str_table
-    int i = 0, size = str_table.size();
+    int size = str_table.size();
     string first(str_table[0]);
     if(first == "SELECT") //查询命令
     {
@@ -147,11 +147,11 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
         }
         else if(where == "user") //查看用户
         {
-            show_user(0, "", "");
+            show_user(3, "", "");
         }
         else if(where == "order") //查看订单
         {
-            show_order(0, "", "");
+            show_order(3, "", "");
         }
         else //没有这个表
         {
@@ -177,11 +177,11 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
         string value = str_table[9];
         if(where == "user")
         {
-            update_user(0, option, value, tobe_option, tobe_value);
+            update_user(3, option, value, tobe_option, tobe_value);
         }
         else if(where == "commodity")
         {
-            update_commodity(0, option, value, tobe_option, tobe_value);
+            update_commodity(3, option, value, tobe_option, tobe_value, user_id); //别忘了传入user_id
         }
         else //
         {

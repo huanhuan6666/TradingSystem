@@ -48,7 +48,8 @@ struct Order_t {
 //重载Order_t的 << 方便在文件中的输出
 inline ostream& operator<<(ostream& out, Order_t& odr)
 {
-    out << odr.o_id << "," << odr.c_id << "," << odr.o_price << ","
+    out << setiosflags(ios::fixed);
+    out << odr.o_id << "," << odr.c_id << "," << setprecision(1) << odr.o_price << ","
         << odr.o_count << "," << odr.o_time << "," << odr.m_id << "," << odr.m_buy_id << endl;
     return out;
 }
@@ -77,7 +78,8 @@ struct Commodity_t {
 //重载Commodity_t的<<方便在文件中的输出
 inline ostream &operator<<(ostream &out, Commodity_t& com)
 {
-    out << com.c_id << "," << com.c_name << "," << com.c_price << "," << com.c_count << ","
+    out << setiosflags(ios::fixed);
+    out << com.c_id << "," << com.c_name << "," << setprecision(1) << com.c_price << "," << com.c_count << ","
         << com.c_des << "," << com.m_id << "," << com.c_time << "," << com.c_state << endl;
     return out;
 }
@@ -145,7 +147,7 @@ inline void show_commodity(int type, const string &option, const string &value) 
             }
         }
     }
-    else if(type == 3) //用户模式下展示该用户ID的条目
+    else if(type == 3) //卖家模式 查看本ID下所有状态的商品
     {
         while (getline(fin, line)) {
             vector<string> each;
@@ -165,10 +167,11 @@ inline void show_commodity(int type, const string &option, const string &value) 
         //}
         goto END;
     }
-    cout << endl << "*******************************************************************" << endl;
+    cout << endl << "********************************************************************" << endl;
     cout << "商品ID   名称      价格      上架时间       卖家ID    数量       商品状态" << endl;
     for (const auto& com: res) {
-        cout << com.c_id << '\t' << com.c_name << '\t' << com.c_price << '\t'
+        cout << setiosflags(ios::fixed);
+        cout << com.c_id << '\t' << com.c_name << '\t' << setprecision(1) << com.c_price << '\t'
              << com.c_time << '\t' << com.m_id << '\t' << com.c_count << '\t' << com.c_state << endl;
     }
     cout << "********************************************************************" << endl;
@@ -391,8 +394,10 @@ inline void update_user(int type, const string &option, const string &value,
 }
 
 //更新commodity.txt文件中option==value条目的tobe_option为tobe_value
+//type == 0为管理员模式,可以修改所有商品
+//type == 3为卖家模式, 只能修改自己发布的商品，卖家ID需要传入到id参数中
 inline void update_commodity(int type, const string &option, const string &value,
-                             const string &tobe_option, const string &tobe_value){
+                             const string &tobe_option, const string &tobe_value, const string& id=""){
     vector<Commodity_t> res; //这里的Commodity_t就是结构体了
     ifstream fin(commodity_file);
     ofstream fout("tmp_commodity_file.txt");
@@ -404,7 +409,7 @@ inline void update_commodity(int type, const string &option, const string &value
     getline(fin, line); //第一行表头
     fout << line << endl; //表头别忘了写到临时文件里！
     //cout << line;
-    if (type == 0)
+    if (type == 0) //管理员模式
     {
         bool exist = false;
         while (getline(fin, line)) {
@@ -417,7 +422,7 @@ inline void update_commodity(int type, const string &option, const string &value
                 {
                     if(tobe_option == "商品状态")
                     {
-                        tmp.c_state = "下架";
+                        tmp.c_state = "已下架";
                         fout << tmp;   //Commodity_t重载了<<
                     }
                     else
@@ -449,7 +454,7 @@ inline void update_commodity(int type, const string &option, const string &value
                         string tmp_choose;
                         cin >> tmp_choose;
                         if(tmp_choose == "y") {
-                            tmp.c_state = "下架";
+                            tmp.c_state = "已下架";
                             fout << tmp;   //Commodity_t中重载了<<
                             cout << "下架成功" << endl;
                         }
@@ -457,6 +462,10 @@ inline void update_commodity(int type, const string &option, const string &value
                             cout << "操作已放弃" << endl;
                             fout << tmp;
                         }
+                    }
+                    else //管理员修改商品的其他信息
+                    {
+                        //TODO:待补
                     }
                 }
                 else //不用改则直接写到临时文件
@@ -479,7 +488,111 @@ inline void update_commodity(int type, const string &option, const string &value
             cout << "******************" << endl;
         }
     }
-    else {
+    else if(type == 3) //卖家模式: 只能修改自己已经发布的商品，这里只实现了卖家下架自己的商品
+    {
+        bool exist = false;
+        while (getline(fin, line)) {
+            vector<string> each;
+            my_split(line, ',', each); //用,分隔文件中的每一行填充each
+            Commodity_t tmp(each); //得到当前这行代表的商品tmp
+            if(option == "商品ID")
+            {
+                if(tmp.m_id == id && tmp.c_id == value) //需要更新，id即卖家ID需要在调用时传入
+                {
+                    exist = true;
+                    if(tobe_option == "商品状态")
+                    {
+                        cout << "查询到相关商品条目如下，确认要下架该商品吗?" << endl;
+                        cout << "***********************************************************" << endl;
+                        cout << "商品ID   名称     价格     上架时间     数量   卖家ID    商品状态" << endl;
+                        cout << setiosflags(ios::fixed);
+                        cout << tmp.c_id << '\t' << tmp.c_name << '\t'<< setprecision(1) << tmp.c_price << '\t'
+                             << tmp.c_time << '\t' << tmp.c_count << '\t' << tmp.m_id << '\t' << tmp.c_state << endl;
+                        cout << "************************************************************" << endl;
+                        cout << "请选择(y/n)，输入非y代表放弃本次操作: ";
+                        string tmp_choose;
+                        cin >> tmp_choose;
+                        if(tmp_choose == "y") {
+                            tmp.c_state = tobe_value;
+                            fout << tmp;   //Commodity_t中重载了<<
+                            cout << "下架成功" << endl;
+                        }
+                        else {  //放弃则不改变原文件内容继续写tmpfile
+                            cout << "操作已放弃" << endl;
+                            fout << tmp;
+                        }
+                    }
+                    else if(tobe_option == "价格")
+                    {
+                        cout << "请确认修改的商品信息无误！" << endl;
+                        cout << "**********************************" << endl;
+                        cout << "商品ID: " << tmp.c_id << endl;
+                        cout << "商品名称: " << tmp.c_name << endl;
+                        cout << "商品价格: " << tobe_value << endl;
+                        cout << "商品描述: " << tmp.c_des << endl;
+                        cout << "**********************************" << endl;
+                        cout << "确认修改?(y/n)，输入非y代表放弃本次操作: ";
+                        string tmp_choose;
+                        cin >> tmp_choose;
+                        if(tmp_choose == "y") {
+                            tmp.c_price = stof(tobe_value);
+                            fout << tmp;   //Commodity_t中重载了<<
+                            cout << "修改成功!" << endl;
+                        }
+                        else {  //放弃则不改变原文件内容继续写tmpfile
+                            cout << "操作已放弃" << endl;
+                            fout << tmp;
+                        }
+                    }
+                    else if(tobe_option == "描述")
+                    {
+                        cout << setiosflags(ios::fixed);
+                        cout << "请确认修改的商品信息无误！" << endl;
+                        cout << "**********************************" << endl;
+                        cout << "商品ID: " << tmp.c_id << endl;
+                        cout << "商品名称: " << tmp.c_name << endl;
+                        cout << "商品价格: " << setprecision(1) << tmp.c_price << endl;
+                        cout << "商品描述: " << tobe_value << endl;
+                        cout << "**********************************" << endl;
+                        cout << "确认修改?(y/n)，输入非y代表放弃本次操作: ";
+                        string tmp_choose;
+                        cin >> tmp_choose;
+                        if(tmp_choose == "y") {
+                            tmp.c_des = tobe_value;
+                            fout << tmp;   //Commodity_t中重载了<<
+                            cout << "修改成功!" << endl;
+                        }
+                        else {  //放弃则不改变原文件内容继续写tmpfile
+                            cout << "操作已放弃" << endl;
+                            fout << tmp;
+                        }
+                    }
+                    else //卖家修改商品的其他信息
+                    {
+                        //TODO:待补
+                    }
+                }
+                else //不用改则直接写到临时文件
+                {
+                    fout << line << endl;
+                }
+            }
+            else
+            {
+                cout << "Usage: 选项 " << tobe_option << "暂不支持, 待补" << endl;
+                fin.close();
+                fout.close();
+                return;
+            }
+        }
+        if(!exist)
+        {
+            cout << "********************" << endl;
+            cout << "商品表没有您发布的该商品" << endl;
+            cout << "********************" << endl;
+        }
+    }
+    else { //其他模式
         //待补
     }
 
