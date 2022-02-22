@@ -81,9 +81,9 @@ void SqlHelper::sql_analyse(const string &cmd) {
         {
             update_user(0, option, value, tobe_option, tobe_value);
         }
-        else if(where == "commonity")
+        else if(where == "commodity")
         {
-
+            update_commodity(0, option, value, tobe_option, tobe_value);
         }
         else //
         {

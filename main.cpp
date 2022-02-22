@@ -141,7 +141,7 @@ void manage_choose_Admin(string& cmd, Administrator &admin)
     }
     else if(cmd == "6") //下架商品
     {
-
+        admin.off_the_shelf();
     }
     else //非法输入
     {

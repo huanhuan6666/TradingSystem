@@ -60,12 +60,13 @@ void Administrator::block_users() {
     cout << "请输入要封禁的用户ID: ";
     cin >> user_id;
     sql_cmd = "UPDATE user SET 用户状态 = 封禁 WHERE 用户ID = " + user_id;
+    cout << "对应SQL命令为: " << sql_cmd << endl;
     m_sql_helper.sql_analyse(sql_cmd);
 
     sql_cmd = "UPDATE commodity SET 商品状态 = 已下架 WHERE 卖家ID = " + user_id;
-    //TODO: 解析sql命令并且执行
+    cout << "对应SQL命令为: " << sql_cmd << endl;
     m_sql_helper.sql_analyse(sql_cmd);
-
+    //TODO: 解析sql命令并且执行
 }
 
 bool Administrator::check_pass() {
