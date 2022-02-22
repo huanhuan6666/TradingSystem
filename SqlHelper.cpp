@@ -105,7 +105,8 @@ void SqlHelper::sql_analyse(const string &cmd) {
 
 }
 
-UserSqlHelper::UserSqlHelper(string &id) {
+UserSqlHelper::UserSqlHelper(int& status, string &id) {
+    user_status = status;
     user_id = id;
 }
 
@@ -136,11 +137,13 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
                 }
                 option = str_table[5];
                 value = str_table[7];
+                //TODO: 下面的强弱搜索实际上也要和用户当前状态匹配
+                //根据user_status传入不同的type即可，待补
                 if(str_table[6] == "=") {//强搜索
-                    show_commodity(1, option, value);
+                    show_commodity(user_status+1, option, value);
                 }
                 else if(str_table[6] == "CONTAINS") {//包含搜索
-                    show_commodity(2, option, value);
+                    show_commodity(user_status+2, option, value);
                 }
                 else //除了CONTAINS 和 = 以外的
                 {
@@ -149,17 +152,17 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
                 }
             }
             else {//没有额外条件则展示所有条目
-                show_commodity(3, "", user_id); //用户需要传入自己的ID
+                show_commodity(user_status, "", user_id); //用户需要传入自己状态和ID
             }
         }
         else if(where == "user") //查看用户
         {
-            show_user(3, "", "");
+            show_user(user_status, "", "");
         }
         else if(where == "order") //查看订单
         {
             if(size <= 4) {//没有额外条件 查看所有订单
-                show_order(3, "", user_id);
+                show_order(user_status, "", user_id);
             }
             else //WHERE条件
             {
@@ -190,11 +193,11 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
         string value = str_table[9];
         if(where == "user")
         {
-            update_user(3, option, value, tobe_option, tobe_value);
+            update_user(user_status, option, value, tobe_option, tobe_value);
         }
         else if(where == "commodity")
         {
-            update_commodity(3, option, value, tobe_option, tobe_value, user_id); //别忘了传入user_id
+            update_commodity(user_status, option, value, tobe_option, tobe_value, user_id); //别忘了传入user_id
         }
         else //
         {

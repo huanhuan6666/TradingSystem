@@ -12,7 +12,7 @@ void Buyers::display_cmd() {
 }
 
 Buyers::Buyers() {
-    ;
+    m_sql_helper.user_status = STATUS_BUYER;;
 }
 
 //通过User实例化Buyer，是因为设计框架将User派生出Buyer，main中User确定用户身份为Buyer后将调用该函数成为一个买家对象
@@ -26,4 +26,27 @@ Buyers::Buyers(Users &u) {
     m_money =  u.m_money;
     m_state =  u.m_state;
     m_sql_helper.user_id = m_id;
+    m_sql_helper.user_status = STATUS_BUYER;
+}
+
+void Buyers::buy_goods() {
+
+}
+
+void Buyers::search_goods() {
+    string com_name, sql_cmd;
+    cout << "请输入商品名称: ";
+    cin >> com_name;
+    sql_cmd = "SELECT * FROM commodity WHERE 名称 CONTAINS " + com_name;
+    cout << "对应SQL命令为: " << sql_cmd << endl;
+    m_sql_helper.sql_analyse(sql_cmd);
+}
+
+void Buyers::display_good_info() {
+    string com_id, sql_cmd;;
+    cout << "请输入您想要查看的商品ID: ";
+    cin >> com_id;
+    sql_cmd = "SELECT * FROM commodity WHERE 商品ID CONTAINS " + com_id;
+    cout << "对应SQL命令为: " << sql_cmd << endl;
+    m_sql_helper.sql_analyse(sql_cmd);
 }

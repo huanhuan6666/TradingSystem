@@ -5,7 +5,6 @@
 #include "Sellers.h"
 #include <iostream>
 #include <iomanip>
-#include <sstream>
 using namespace std;
 
 void Sellers::display_cmd(){
@@ -17,7 +16,7 @@ void Sellers::display_cmd(){
 }
 
 Sellers::Sellers() {
-    ;
+    m_sql_helper.user_status = STATUS_SELLER;
 }
 
 Sellers::Sellers(Users &u) {
@@ -29,21 +28,16 @@ Sellers::Sellers(Users &u) {
     m_money =  u.m_money;
     m_state =  u.m_state;
     m_sql_helper.user_id = m_id;
+    m_sql_helper.user_status = STATUS_SELLER;
 }
 
 void Sellers::release_good() {
 
 }
 
-void Sellers::display_my_good() {
-    string sql_cmd = "SELECT * FROM commodity";
-    cout << "对应SQL命令为: " << sql_cmd << endl;
-    m_sql_helper.sql_analyse(sql_cmd);
-}
 
 void Sellers::update_my_good() {
-    string sql_cmd;
-    string com_id;
+    string sql_cmd, com_id;
     cout << "请输入被修改商品的ID: ";
     cin >> com_id;
     string tmp;
@@ -86,8 +80,3 @@ void Sellers::off_my_shelf() {
     m_sql_helper.sql_analyse(sql_cmd);
 }
 
-void Sellers::display_my_order() {
-    string sql_cmd = "SELECT * FROM order";
-    cout << "对应SQL命令为: " << sql_cmd << endl;
-    m_sql_helper.sql_analyse(sql_cmd);
-}

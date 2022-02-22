@@ -12,7 +12,7 @@ void manage_choose_Buyer(string& cmd, Buyers& buyer)
 {
     if(cmd == "1") //查看商品列表
     {
-
+        buyer.display_my_good();
     }
     else if(cmd == "2") //购买商品
     {
@@ -20,15 +20,15 @@ void manage_choose_Buyer(string& cmd, Buyers& buyer)
     }
     else if(cmd == "3") //搜索商品
     {
-
+        buyer.search_goods();
     }
     else if(cmd == "4") //查看历史订单
     {
-
+        buyer.display_my_order();
     }
     else if(cmd == "5") //查看商品详细信息
     {
-
+        buyer.display_good_info();
     }
     else //异常输入
     {

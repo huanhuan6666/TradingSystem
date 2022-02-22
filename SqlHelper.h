@@ -22,11 +22,12 @@ public:
 //传入的user_id就表示对应的用户ID，同样这个类是作为User的组件
 class UserSqlHelper : public SqlHelper{
 public:
+    int user_status;  //表示当前用户是买家还是卖家 0为卖家 1为买家
     string user_id; //用户ID
 
 public:
     UserSqlHelper() { ; }
-    UserSqlHelper(string &id);
+    UserSqlHelper(int& status, string &id);
     void sql_analyse(const string &cmd) override;
 };
 #endif //PROJECT1_SQLHELPER_H

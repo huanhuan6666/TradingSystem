@@ -69,7 +69,7 @@ void Administrator::block_users() {
     //TODO: 解析sql命令并且执行
 }
 
-bool Administrator::check_pass() {
+bool Administrator::check_pass() const {
     string name, pass;
     cout << "请输入管理员姓名(默认admin): ";
     cin >> name;

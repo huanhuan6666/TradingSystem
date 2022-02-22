@@ -20,7 +20,7 @@ public:
 public:
     Administrator();
 
-    bool check_pass();   //检测密码
+    bool check_pass() const;   //检测密码
     void cmd_display();  //展示管理员功能界面
     void search_goods();  //搜索商品
     void display_all_goods(); //查看所有商品

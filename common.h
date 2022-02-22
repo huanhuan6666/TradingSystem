@@ -24,6 +24,10 @@ const string commands_file = "commands.txt";
 const string order_file = "order.txt";
 const string user_file = "user.txt";
 
+//一些状态，用在UserSqlHelper中区分买家卖家
+const int STATUS_SELLER = 3;
+const int STATUS_BUYER = 6;
+
 //商品和订单我们只关注其数据，因此表示成结构体就可以
 struct Order_t {
     Order_t(vector<string> &each) {
@@ -99,8 +103,9 @@ inline void my_split(const string &cmd, const char &pattern, vector<string> &res
 
 //展示商品表中的条目
 //为了让接口更紧把管理员和用户的展示都合并进来了
-//管理员模式: type == 0表示展示全部,=1表示值相等,=2表示有CONTAINS包含条件
-//卖家模式: type==3表示展示某个 卖家ID 的条目, value需要传入卖家ID
+//管理员模式: type == 0~2表示展示全部,=1表示值相等,=2表示有CONTAINS包含条件
+//卖家模式: type==3~5 表示展示某个 卖家ID 的条目, value需要传入卖家ID
+//买家模式: type==6~8 展示当前销售中的商品
 inline void show_commodity(int type, const string &option, const string &value) {
     vector<Commodity_t> res;
     ifstream fin(commodity_file);
@@ -157,6 +162,72 @@ inline void show_commodity(int type, const string &option, const string &value) 
                 res.push_back(tmp);
         }
     }
+    else if(type == 6) //买家模式 查看当前在售所有商品
+    {
+        while (getline(fin, line)) {
+            vector<string> each;
+            my_split(line, ',', each); //用,分隔commodity文件中的每一行填充each
+            Commodity_t tmp(each);
+            if(tmp.c_state == "销售中")
+                res.push_back(tmp); //买家只看销售中的商品
+        }
+    }
+    else if(type == 7 || type == 8) //买家模式的 CONTAINS搜索 和 查看==详细信息
+    {
+        while (getline(fin, line)) {
+            vector<string> each;
+            my_split(line, ',', each); //用,分隔commodity文件中的每一行填充each
+            Commodity_t tmp(each);
+            if (option == "名称") {
+                if (type == 7) {//值相等条件，即强匹配搜索
+                    if (tmp.c_state == "销售中" && tmp.c_name == value)
+                        res.push_back(tmp);
+                } else { //CONTAINS包含字串
+                    if (tmp.c_state == "销售中" && tmp.c_name.find(value) != -1)
+                        res.push_back(tmp);
+                }
+            }
+            else if (option == "商品ID") {
+                if (type == 7) {//值相等条件，即强匹配搜索
+                    if (tmp.c_state == "销售中" && tmp.c_id == value)
+                        res.push_back(tmp);
+                } else {
+                    // 事实上用户查看商品要求生成的Sql语句就是 ID CONTAINS ..而没用=，我也不好说什么..
+                    if (tmp.c_state == "销售中" && tmp.c_id.find(value) != -1)
+                        res.push_back(tmp);
+                }
+            }
+            else if (tmp.c_state == "销售中" && option == "卖家ID") {
+                if (tmp.m_id == value)
+                    res.push_back(tmp);
+            }
+            else //其他选项
+            {
+                cout << "Usage: 暂不支持条件选项 " << option << " 的匹配" << endl;
+                break;
+            }
+        }
+        //买家的这个展示比较特殊，单独cout吧还是
+        if(res.empty())
+        {
+            goto EMPTY;
+        }
+        if(option == "商品ID") {
+            for (const auto &com: res) {
+                cout << "********************************" << endl;
+                cout << "商品ID: " << com.c_id << endl;
+                cout << "商品名称: " << com.c_name << endl;
+                cout << "商品价格: " << com.c_price << endl;
+                cout << "上架时间: " << com.c_time << endl;
+                cout << "商品描述: " << com.c_des << endl;
+                cout << "商品卖家: " << com.m_id << endl;
+                cout << "********************************" << endl;
+            }
+            cout << endl;
+            goto END;
+        }
+    }
+EMPTY:
     if(res.empty())
     {
         //可以根据type的不同展示不同的输出
@@ -257,7 +328,7 @@ inline void show_order(int type, const string &option, const string &value) {
                 res.push_back(tmp);
         }
     }
-    else if(type == 6) //买家模式展示自己作为卖家的订单
+    else if(type == 6) //买家模式展示自己作为买家的订单
     {
         while (getline(fin, line)) {
             vector<string> each;

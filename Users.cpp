@@ -95,3 +95,19 @@ Users &Users::operator=(Users &tmp) {
     m_sql_helper.user_id = m_id;
     return *this;
 }
+
+//卖家查看自己作为卖家的订单
+//买家查看自己作为买家的订单
+void Users::display_my_order() {
+    string sql_cmd = "SELECT * FROM order";
+    cout << "对应SQL命令为: " << sql_cmd << endl;
+    m_sql_helper.sql_analyse(sql_cmd);
+}
+
+//卖家是查看自己ID发布的商品
+//买家则是看所有销售中的商品
+void Users::display_my_good() {
+    string sql_cmd = "SELECT * FROM commodity";
+    cout << "对应SQL命令为: " << sql_cmd << endl;
+    m_sql_helper.sql_analyse(sql_cmd);
+}
