@@ -227,7 +227,7 @@ END:
 //展示订单的函数，同样也只实现了type==0展示全部条目, 待补
 //管理员模式: type == 0展示全部条目
 //卖家模式: type == 3展示自己作为卖家的订单, value需要传入卖家ID
-//卖家模式: type == 6展示自己作为卖家的订单, value需要传入买家ID
+//买家模式: type == 6展示自己作为买家的订单, value需要传入买家ID
 inline void show_order(int type, const string &option, const string &value) {
     vector<Order_t> res; //这里的Users用的是class类
     ifstream fin(order_file);
@@ -604,5 +604,17 @@ inline void update_commodity(int type, const string &option, const string &value
     const char* newname = commodity_file.c_str();
     rm_rename(newname, oldname);
 
+}
+
+//将sql命令按照 [时间 : 命令]的格式写到文件中
+inline void write_order(const string& cmd)
+{
+    time_t t = time(0);
+    char tmp[32] = { NULL };
+    strftime(tmp, sizeof(tmp), "%Y-%m-%d %H:%M:%S", localtime(&t));
+    string cur_time(tmp);
+    ofstream fout(commands_file, ios::app);
+    fout << cur_time << ": " << cmd << endl;
+    fout.close();
 }
 #endif //PROJECT1_COMMON_H

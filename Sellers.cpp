@@ -87,5 +87,7 @@ void Sellers::off_my_shelf() {
 }
 
 void Sellers::display_my_order() {
-
+    string sql_cmd = "SELECT * FROM order";
+    cout << "对应SQL命令为: " << sql_cmd << endl;
+    m_sql_helper.sql_analyse(sql_cmd);
 }

@@ -40,7 +40,7 @@ void manage_choose_Seller(string& cmd, Sellers& seller)
 {
     if(cmd == "1") //发布商品
     {
-
+        seller.release_good(); //TODO: INSERT指令的解析
     }
     else if(cmd == "2") //查看发布商品
     {
@@ -56,7 +56,7 @@ void manage_choose_Seller(string& cmd, Sellers& seller)
     }
     else if(cmd == "5") //查看历史订单
     {
-
+        seller.display_my_order();
     }
     else //异常输入
     {
