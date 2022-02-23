@@ -51,9 +51,21 @@ void Sellers::update_my_good() {
     if(tmp == "1")
     {
         string price;
-        cout << "请输入被修改商品的价格(保留一位小数): ";
-        cin >> price;
-        float p = stof(price); //用串IO保留一位小数
+        float p = 0;
+        while(true) {
+            cout << "请输入被修改商品的价格(保留一位小数): ";
+            cin >> price;
+            try {
+                p = stof(price); //用串IO保留一位小数
+                break;
+            }
+            catch (invalid_argument&) {
+                cout << "请输入正确的浮点数！" << endl;
+            }
+            catch (...) {
+                cout << "其他异常！" << endl;
+            }
+        }
         ostringstream sout;
         sout << setiosflags(ios::fixed);
         sout << setprecision(1) << p;

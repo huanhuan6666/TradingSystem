@@ -4,6 +4,7 @@
 
 #include "Users.h"
 #include <iostream>
+#include <set>
 #include "common.h"
 using namespace std;
 
@@ -110,4 +111,129 @@ void Users::display_my_good() {
     string sql_cmd = "SELECT * FROM commodity";
     cout << "对应SQL命令为: " << sql_cmd << endl;
     m_sql_helper.sql_analyse(sql_cmd);
+}
+
+//TODO: 对于属于信息的格式判断: 比如只能出现数字和字母以及'汉字算一个字符'，准备用正则表达式实现
+//用户注册功能，这部分在课件说不需要生成SQL指令，就按正常流程走了
+void Users::sign_up() {
+    //得到用户ID池和用户名池，用于之后的ID生成和用户名重复判断
+    ifstream fin(user_file);
+    string line;
+    set<string> id_pool, name_pool; //用户表中已经存在的用户ID池和用户名池
+    if (!fin) {
+        cout << "Error: open file failed! " << user_file;
+        return;
+    }
+
+    getline(fin, line); //第一行表头
+    while (getline(fin, line)) {
+        vector<string> each;
+        my_split(line, ',', each);
+        Users tmp(each); //得到当前这行代表的用户tmp
+        id_pool.insert(tmp.m_id);
+        name_pool.insert(tmp.m_name);
+    }
+    fin.close();
+
+    string name, pass, tel, addr, money;
+    while(true) {
+        while (true) {
+            cout << "请输入新用户名(不超过10个字符): ";
+            cin >> name;
+            cout << "这个长度：" << name.length() << endl;
+            if(name.length() > 10) {
+                cout << "用户名不能超过10个字符!" << endl;
+                continue;
+            }else
+                break;
+        }
+        //查看用户名是否重复
+        if (name_pool.count(name) == 1) //用户名存在
+        {
+            cout << "当前用户名已经存在，请重新输入！" << endl;
+            continue;
+        }
+        else {
+            break;
+        }
+    }
+
+    while (true){
+        cout << "请输入用户密码(不超过20个字符): ";
+        cin >> pass;
+        if(pass.length() > 20) {
+            cout << "密码不能超过20个字符!" << endl;
+            continue;
+        }else {
+            break;
+        }
+    }
+
+    while (true){
+        cout << "请输入联系方式(不超过20个字符): ";
+        cin >> tel;
+        if(tel.length() > 20) {
+            cout << "联系方式不能超过20个字符!" << endl;
+            continue;
+        } else{
+            break;
+        }
+    }
+
+    while(true){
+        cout << "请输入地址(不超过20个字符): ";
+        cin >> addr;
+        if(addr.length() > 20){
+            cout << "地址不能超过20个字符!" << endl;
+            continue;
+        } else{
+            break;
+        }
+    }
+
+    float p = 0;
+    while(true){
+        cout << "请输入金额(保留一位小数): ";
+        cin >> money;
+        p = stof(money); //用串IO保留一位小数
+        try {
+            p = stof(money); //用串IO保留一位小数
+            break;
+        }
+        catch (invalid_argument&) {
+            cout << "请输入正确的浮点数！" << endl;
+        }
+        catch (...) {
+            cout << "其他异常！" << endl;
+        }
+    }
+    ostringstream sout;
+    sout << setiosflags(ios::fixed);
+    sout << setprecision(1) << p;
+    money = sout.str();  //保留一位小数
+
+
+    //取id池中最大id + 1生成新的id, 用串IO实现3位编号补零
+    ostringstream idout;
+    idout << setw(3)<<setfill('0') << stoi((*id_pool.rbegin()).substr(1, 3)) + 1;
+    string new_id = "U" + idout.str();
+    //填写对象属性则新用户创建完成！
+    m_id    =   new_id;
+    m_name  =   name;
+    m_pass  =   pass;
+    m_tel   =   tel;
+    m_addr  =   addr;
+    m_money =   stof(money);
+    m_state =   "正常";
+
+    ofstream fout(user_file, ios::app);
+    if (!fout) {
+        cout << "Error: open file failed! " << user_file;
+        return;
+    }
+    fout << *this; //在文件尾部符加本新用户
+    fout.close();
+
+    cout << "用户创建成功!" << endl;
+
 }

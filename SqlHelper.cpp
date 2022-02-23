@@ -137,7 +137,6 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
                 }
                 option = str_table[5];
                 value = str_table[7];
-                //TODO: 下面的强弱搜索实际上也要和用户当前状态匹配
                 //根据user_status传入不同的type即可，待补
                 if(str_table[6] == "=") {//强搜索
                     show_commodity(user_status+1, option, value);

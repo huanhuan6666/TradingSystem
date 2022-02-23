@@ -192,7 +192,9 @@ void manage_choose_UI(string& choose)
     }
     else if(choose == "2") //用户注册
     {
-        //TODO:用户注册, INSERT指令的实现
+        Users new_user;
+        new_user.sign_up();
+
     }
     else if(choose == "3") //用户登录
     {

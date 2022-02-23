@@ -66,7 +66,6 @@ void Administrator::block_users() {
     sql_cmd = "UPDATE commodity SET 商品状态 = 已下架 WHERE 卖家ID = " + user_id;
     cout << "对应SQL命令为: " << sql_cmd << endl;
     m_sql_helper.sql_analyse(sql_cmd);
-    //TODO: 解析sql命令并且执行
 }
 
 bool Administrator::check_pass() const {

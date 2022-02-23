@@ -28,6 +28,7 @@ public:
     Users(vector<string> &each);
     Users &operator=(Users &tmp);
     bool check_pass(); //密码验证
+    void sign_up(); //用户注册，写到了User类中
     void display_my_order(); //查看历史订单: 这个函数在买家卖家中一致，直接写到父类里
     void display_my_good(); //查看商品: 同样买家卖家行为一致，统一写到父类
     virtual void display_cmd(); //界面展示

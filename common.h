@@ -536,7 +536,7 @@ inline void update_commodity(int type, const string &option, const string &value
                     }
                     else //管理员修改商品的其他信息
                     {
-                        //TODO:待补
+                        //待补
                     }
                 }
                 else //不用改则直接写到临时文件
@@ -640,7 +640,7 @@ inline void update_commodity(int type, const string &option, const string &value
                     }
                     else //卖家修改商品的其他信息
                     {
-                        //TODO:待补
+                        //待补
                     }
                 }
                 else //不用改则直接写到临时文件
