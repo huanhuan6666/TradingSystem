@@ -12,7 +12,8 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
-#include<cstdio>
+#include <ctime>
+#include <cstdio>
 #include <fstream>
 #include <sstream>
 #include "Users.h"
@@ -58,6 +59,7 @@ inline ostream& operator<<(ostream& out, Order_t& odr)
     return out;
 }
 struct Commodity_t {
+    Commodity_t() { ; }
     Commodity_t(vector<string> &each) {
         c_id = each[0];
         c_name = each[1];
@@ -680,8 +682,8 @@ inline void update_commodity(int type, const string &option, const string &value
 //将sql命令按照 [时间 : 命令]的格式写到文件中
 inline void write_order(const string& cmd)
 {
-    time_t t = time(0);
-    char tmp[32] = { NULL };
+    time_t t = time(nullptr);
+    char tmp[32] = { 0 };
     strftime(tmp, sizeof(tmp), "%Y-%m-%d %H:%M:%S", localtime(&t));
     string cur_time(tmp);
     ofstream fout(commands_file, ios::app);

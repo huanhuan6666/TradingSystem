@@ -195,7 +195,6 @@ void Users::sign_up() {
     while(true){
         cout << "请输入金额(保留一位小数): ";
         cin >> money;
-        p = stof(money); //用串IO保留一位小数
         try {
             p = stof(money); //用串IO保留一位小数
             break;

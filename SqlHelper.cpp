@@ -4,7 +4,10 @@
 
 #include "SqlHelper.h"
 #include <iostream>
+#include <cstdio>
+#include <ctime>
 #include <string>
+#include <set>
 #include "common.h"
 
 using namespace std;
@@ -175,7 +178,86 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
     }
     else if(first == "INSERT")
     {
+        if(str_table[1] != "INTO" || str_table[3] != "VALUES"){
+            cout << "Usage: 无法解析命令 " << cmd << " error: " << str_table[1] << " " << str_table[3] << endl;
+            return ;
+        }
+        string where = str_table[2];
+        string temp_all = str_table[4]; //需要去除首尾()
+        string all_values = temp_all.substr(1, temp_all.length()-2); //理论上就是value1,value2..的那个
+        vector<string> values_res;
+        my_split(all_values, ',', values_res); //拆开填写到vector中
 
+        if(where == "commodity" && user_status == STATUS_SELLER) { //这个应该是卖家发布商品INSERT到商品表中
+            //首先给商品获取一个新ID
+            set<string> id_pool; //商品表中已经存在的商品ID池
+            ifstream fin(commodity_file);
+            if (!fin) {
+                cout << "Error: open file failed! " << user_file;
+                return;
+            }
+            string line;
+            getline(fin, line); //第一行表头
+            while (getline(fin, line)) {
+                vector<string> each;
+                my_split(line, ',', each);
+                Commodity_t tmp(each);
+                id_pool.insert(tmp.c_id);
+            }
+            fin.close(); //得到商品ID池
+
+            //取id池中最大id + 1生成新的id, 用串IO实现3位编号补零
+            ostringstream idout;
+            idout << setw(3) <<setfill('0') << stoi((*id_pool.rbegin()).substr(1, 3)) + 1;
+            string new_id = "M" + idout.str();
+            //获取上架时间 年-月-日
+            time_t t = time(nullptr);
+            char tmp[32] = { 0 };
+            strftime(tmp, sizeof(tmp), "%Y-%m-%d", localtime(&t));
+            string cur_time(tmp);
+
+            values_res.insert(values_res.begin(), new_id);
+            values_res.push_back(user_id);
+            values_res.push_back(cur_time); //上架时间
+            values_res.emplace_back("销售中");
+            //创建新商品实例
+            Commodity_t new_com(values_res);
+            cout << "请确认发布的商品信息无误! " << endl;
+            cout << "*****************************" << endl;
+            cout << "商品名称: " << new_com.c_name << endl;
+            cout << "商品价格: " << new_com.c_price << endl;
+            cout << "商品数量: " << new_com.c_count << endl;
+            cout << "商品描述: " << new_com.c_des << endl;
+            cout << "上架时间(系统确定): " << new_com.c_time << endl;
+            cout << "商品ID(系统确定): " << new_com.c_id << endl;
+            cout << "商品状态(系统确定): " << new_com.c_state << endl;
+            cout << "*****************************" << endl;
+
+            cout << "您确认要发布商品吗?" << endl;
+            cout << "请选择(y/n)，输入非y代表放弃本次操作: ";
+            string tmp_choose;
+            cin >> tmp_choose;
+            if(tmp_choose == "y") { //确认发布则附加写新商品
+                ofstream fout(commodity_file, ios::app);
+                if (!fout) {
+                    cout << "Error: open file failed! " << user_file;
+                    return;
+                }
+                fout << new_com;
+                fout.close();
+                cout << "发布商品成功！" << endl;
+            }else{
+                cout << "操作已放弃" << endl;
+                return ;
+            }
+        }
+        else if(where == "order" && user_status == STATUS_BUYER) { //这个应该是买家购买商品后INSERT到订单表中
+
+        }
+        else{ //待补
+            cout << "Usage: 这个表应该不能INSERT吧就是说" << endl;
+            return ;
+        }
     }
     else if(first == "UPDATE")
     {

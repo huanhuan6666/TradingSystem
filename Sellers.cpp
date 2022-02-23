@@ -5,6 +5,7 @@
 #include "Sellers.h"
 #include <iostream>
 #include <iomanip>
+#include <set>
 using namespace std;
 
 void Sellers::display_cmd(){
@@ -32,10 +33,73 @@ Sellers::Sellers(Users &u) {
 }
 
 void Sellers::release_good() {
+    //INSERT INTO name VALUES (value1,value2,···,valueT)
+    string name, price, count, des;
+    //商品名称是可以重复的
+    while (true) {
+        cout << "请输入商品名称(不超过10个字符): ";
+        cin >> name;
+        cout << "这个长度：" << name.length() << endl;
+        if(name.length() > 10) {
+            cout << "商品名称不能超过10个字符!" << endl;
+            continue;
+        }else
+            break;
+    }
+
+    float p = 0;
+    while(true){
+        cout << "请输入商品价格(保留一位小数): ";
+        cin >> price;
+        try {
+            p = stof(price); //用串IO保留一位小数
+            break;
+        }
+        catch (invalid_argument&) {
+            cout << "请输入正确的浮点数！" << endl;
+        }
+        catch (...) {
+            cout << "其他异常！" << endl;
+        }
+    }
+    ostringstream sout;
+    sout << setiosflags(ios::fixed);
+    sout << setprecision(1) << p;
+    price = sout.str();  //保留一位小数
+
+    int q = 0;
+    while(true){
+        cout << "请输入商品数量(正整数): ";
+        cin >> count;
+        try {
+            q = stoi(count); //用串IO保留一位小数
+            break;
+        }
+        catch (invalid_argument&) {
+            cout << "请输入正确的正整数！" << endl;
+        }
+        catch (...) {
+            cout << "其他异常！" << endl;
+        }
+    }
+    count = to_string(q); //获取正整数的字符串
+
+    while(true) {
+        cout << "请输入商品描述(不超过100个字符): ";
+        cin >> des;
+        if(name.length() > 100) {
+            cout << "商品描述不能超过100个字符!" << endl;
+            continue;
+        }else
+            break;
+    }
+    string sql_cmd = "INSERT INTO commodity VALUES (" + name + "," + price + "," + count + "," + des + ")";
+    cout << "对应SQL命令为: " << sql_cmd << endl;
+    m_sql_helper.sql_analyse(sql_cmd);
 
 }
 
-
+//修改商品信息
 void Sellers::update_my_good() {
     string sql_cmd, com_id;
     cout << "请输入被修改商品的ID: ";
