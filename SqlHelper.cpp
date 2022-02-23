@@ -252,7 +252,89 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
             }
         }
         else if(where == "order" && user_status == STATUS_BUYER) { //这个应该是买家购买商品后INSERT到订单表中
-
+            //需要修改文件：附加写订单文件    修改用户文件的余额  修改商品文件的商品数量
+            //XXX:若商品数量为0下架指令在这里被优化了！
+            //订单ID和交易时间在生成sql命令的时候就包含了
+            cout << "您确认要购买吗?" << endl;
+            cout << "请选择(y/n)，输入非y代表放弃本次操作: ";
+            string tmp_choose;
+            cin >> tmp_choose;
+            if(tmp_choose == "y") {
+                //修改用户的余额
+                float balance;
+                ifstream fin(user_file);
+                ofstream fout("tmp_user_file.txt");
+                if (!fin || !fout) {
+                    cout << "Error: open file failed! " << user_file;
+                    return;
+                }
+                string line;
+                getline(fin, line); //第一行表头
+                fout << line << endl; //表头别忘了写到临时文件里！
+                while(getline(fin, line)) {
+                    vector<string> each;
+                    my_split(line, ',', each); //用,分隔user_file文件中的每一行填充each
+                    Users tmp(each); //得到当前这行代表的用户tmp
+                    if(tmp.m_id == user_id) { //需要修改这个用户的余额
+                        tmp.m_money -= stof(values_res[2]) * (float)stoi(values_res[3]);
+                        balance = tmp.m_money;
+                        fout << tmp;
+                    }else{ //不需要修改直接写
+                        fout << line << endl;
+                    }
+                }
+                fin.close();
+                fout.close();
+                const char* oldname = "tmp_user_file.txt";
+                const char* newname = user_file.c_str();
+                rm_rename(newname, oldname);
+                //修改商品文件的商品数量
+                ifstream com_fin(commodity_file);
+                ofstream com_fout("tmp_commodity_file.txt");
+                if (!com_fin || !com_fout) {
+                    cout << "Error: open file failed! " << user_file;
+                    return;
+                }
+                getline(com_fin, line); //第一行表头
+                com_fout << line << endl; //表头别忘了写到临时文件里！
+                while(getline(com_fin, line)) {
+                    vector<string> each;
+                    my_split(line, ',', each);
+                    Commodity_t tmp(each); //得到当前这行代表的商品tmp
+                    if(tmp.c_id == values_res[1]) { //需要修改这个商品的数量
+                        tmp.c_count -= stoi(values_res[3]);
+                        if(tmp.c_count == 0) {//优化sql指令
+                            tmp.c_state = "下架";
+                        }
+                        com_fout << tmp;
+                    }else{ //不需要修改直接写
+                        com_fout << line << endl;
+                    }
+                }
+                com_fin.close();
+                com_fout.close();
+                const char* com_oldname = "tmp_commodity_file.txt";
+                const char* com_newname = commodity_file.c_str();
+                rm_rename(com_newname, com_oldname);
+                //附加写订单文件
+                Order_t new_odr(values_res); //生成新订单实例
+                ofstream odr_fout(order_file, ios::app);
+                if (!odr_fout) {
+                    cout << "Error: open file failed! " << user_file;
+                    return;
+                }
+                odr_fout << new_odr;
+                odr_fout.close();
+                cout << setiosflags(ios::fixed);
+                cout << "*************************" << endl;
+                cout << "交易提醒!" << endl;
+                cout << "交易时间: " << new_odr.o_time << endl;
+                cout << "交易单价: " << setprecision(1) << new_odr.o_price << endl;
+                cout << "交易数量: " << new_odr.o_count << endl;
+                cout << "交易状态: " << "交易成功" << endl;
+                cout << "您的余额: " << setprecision(1) << balance << endl;
+                cout << "*************************" << endl;
+            }
         }
         else{ //待补
             cout << "Usage: 这个表应该不能INSERT吧就是说" << endl;

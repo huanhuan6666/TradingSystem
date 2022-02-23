@@ -16,7 +16,7 @@ void manage_choose_Buyer(string& cmd, Buyers& buyer)
     }
     else if(cmd == "2") //购买商品
     {
-        //TODO: 买家购买商品以及计算器的实现
+        buyer.buy_goods();
     }
     else if(cmd == "3") //搜索商品
     {
@@ -40,7 +40,7 @@ void manage_choose_Seller(string& cmd, Sellers& seller)
 {
     if(cmd == "1") //发布商品
     {
-        seller.release_good(); //TODO: 卖家发布商品INSERT指令的解析
+        seller.release_good();
     }
     else if(cmd == "2") //查看发布商品
     {
@@ -69,7 +69,7 @@ void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
     //1.查看信息 2.修改信息 3.充值 4.返回用户
     if (cmd == "1")
     {
-
+        //TODO: 查看信息需要用到计算器，实现计算器
     }
     else if (cmd == "2")
     {
@@ -77,7 +77,8 @@ void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
     }
     else if(cmd == "3")
     {
-
+        //TODO: 充值需要维护充值记录
+        //这个充值记录我寻思需要自己维护一张表吧
     }
     else //异常输入
     {
