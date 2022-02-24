@@ -32,6 +32,7 @@ string& get_number(string& num)
 }
 void InfoManager::display_my_info() {
     //用户名 地址 联系方式 全在m_user组件里，谁使用Info管理器谁就把信息传给它
+    //因此主要工作就是用计算器计算余额
     string line, exp; //exp就是生成的计算表达式
     //需要扫描充值文件和订单文件(购买和出售，并且合并数量相同的！)
     ifstream re_in(recharge_file);
@@ -155,6 +156,22 @@ void InfoManager::display_my_info() {
         }
     }
     cout << "生成式子化简后为: " << exp << endl;
+    //下面就是调用计算器计算余额了
+    //TODO: 就是说生成的式子还有点问题，比如多个购买一次的商品价钱一样但是没有用乘法。。
+    float money_res = 0;
+    if(m_cal.calculate(exp, money_res)){
+        cout << setiosflags(ios::fixed);
+        cout << "*************************" << endl;
+        cout << "用户名: " << m_user.m_name << endl;
+        cout << "联系方式: " << m_user.m_tel << endl;
+        cout << "地址: " << m_user.m_addr << endl;
+        cout << "钱包余额: " << setprecision(1) << money_res << endl;
+        cout << "*************************" << endl;
+    }
+    else{
+        cout << "计算器出问题啦wwww" << endl;
+        return;
+    }
 
 }
 
