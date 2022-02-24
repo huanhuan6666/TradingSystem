@@ -252,7 +252,7 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
             }
         }
         else if(where == "order" && user_status == STATUS_BUYER) { //这个应该是买家购买商品后INSERT到订单表中
-            //需要修改文件：附加写订单文件    修改用户文件的余额  修改商品文件的商品数量
+            //需要修改文件：附加写订单文件    修改用户文件的买家卖家余额  修改商品文件的商品数量
             //XXX:若商品数量为0下架指令在这里被优化了！
             //订单ID和交易时间在生成sql命令的时候就包含了
             cout << "您确认要购买吗?" << endl;
@@ -261,33 +261,56 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
             cin >> tmp_choose;
             if(tmp_choose == "y") {
                 //修改用户的余额
-                float balance;
-                ifstream fin(user_file);
-                ofstream fout("tmp_user_file.txt");
-                if (!fin || !fout) {
-                    cout << "Error: open file failed! " << user_file;
-                    return;
-                }
                 string line;
-                getline(fin, line); //第一行表头
-                fout << line << endl; //表头别忘了写到临时文件里！
-                while(getline(fin, line)) {
-                    vector<string> each;
-                    my_split(line, ',', each); //用,分隔user_file文件中的每一行填充each
-                    Users tmp(each); //得到当前这行代表的用户tmp
-                    if(tmp.m_id == user_id) { //需要修改这个用户的余额
-                        tmp.m_money -= stof(values_res[2]) * (float)stoi(values_res[3]);
-                        balance = tmp.m_money;
-                        fout << tmp;
-                    }else{ //不需要修改直接写
-                        fout << line << endl;
+                float balance;
+                if(values_res[5] != values_res[6]) { //如果买家卖家都是自己，也就是买自己的商品则不用改余额!
+                    ifstream fin(user_file);
+                    ofstream fout("tmp_user_file.txt");
+                    if (!fin || !fout) {
+                        cout << "Error: open file failed! " << user_file;
+                        return;
+                    }
+
+                    getline(fin, line); //第一行表头
+                    fout << line << endl; //表头别忘了写到临时文件里！
+                    while (getline(fin, line)) {
+                        vector<string> each;
+                        my_split(line, ',', each); //用,分隔user_file文件中的每一行填充each
+                        Users tmp(each); //得到当前这行代表的用户tmp
+                        if (tmp.m_id == user_id) { //这个用户是买家则余额减少
+                            tmp.m_money -= stof(values_res[2]) * (float) stoi(values_res[3]);
+                            balance = tmp.m_money;
+                            fout << tmp;
+                        } else if (tmp.m_id == values_res[5]) { //这个用户是卖家则余额增加
+                            tmp.m_money += stof(values_res[2]) * (float) stoi(values_res[3]);
+                            balance = tmp.m_money;
+                            fout << tmp;
+                        } else { //这个人不是买家，或者买自己的产品则不需要修改直接写
+                            fout << line << endl;
+                        }
+                    }
+                    fin.close();
+                    fout.close();
+                    const char *oldname = "tmp_user_file.txt";
+                    const char *newname = user_file.c_str();
+                    rm_rename(newname, oldname);
+                } else {//买家卖家都是自己只需要读一遍文件获取当前余额就OK了
+                    ifstream fin(user_file);
+                    if(!fin){
+                        cout << "Error: open file failed! " << user_file;
+                        return;
+                    }
+                    getline(fin, line);
+                    while(getline(fin, line)){
+                        vector<string> each;
+                        my_split(line, ',', each); //用,分隔user_file文件中的每一行填充each
+                        Users tmp(each); //得到当前这行代表的用户tmp
+                        if (tmp.m_id == user_id) { //找到该用户
+                            balance = tmp.m_money; //获取余额
+                            break;
+                        }
                     }
                 }
-                fin.close();
-                fout.close();
-                const char* oldname = "tmp_user_file.txt";
-                const char* newname = user_file.c_str();
-                rm_rename(newname, oldname);
                 //修改商品文件的商品数量
                 ifstream com_fin(commodity_file);
                 ofstream com_fout("tmp_commodity_file.txt");

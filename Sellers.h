@@ -12,7 +12,7 @@ public:
     int m_status = STATUS_SELLER; //卖家
 public:
     Sellers();
-    Sellers(Users &u);
+    explicit Sellers(Users &u);
     void display_cmd() override; //展示命令行
     void release_good();  //发布商品
     void update_my_good();  //修改商品信息

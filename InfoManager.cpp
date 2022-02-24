@@ -6,6 +6,7 @@
 #include "common.h"
 #include <iostream>
 #include <set>
+#include <map>
 
 using namespace std;
 
@@ -20,7 +21,140 @@ InfoManager::InfoManager(Users &user) {
     m_user = user;
 }
 
+//传入的num字符串是个整数比如10.0则返回10，若10.2返回10.2
+string& get_number(string& num)
+{
+    int rbegin = num.length()-1;
+    if(num[rbegin] == '0' && num[rbegin-1] == '.') {
+        num = num.substr(0, rbegin-1);
+    }
+    return num;
+}
 void InfoManager::display_my_info() {
+    //用户名 地址 联系方式 全在m_user组件里，谁使用Info管理器谁就把信息传给它
+    string line, exp; //exp就是生成的计算表达式
+    //需要扫描充值文件和订单文件(购买和出售，并且合并数量相同的！)
+    ifstream re_in(recharge_file);
+    if(!re_in){
+        cout << "Error: open file failed! " << recharge_file;
+        return ;
+    }
+
+    vector<string> re_add; //充值所得
+    getline(re_in, line); //第一行表头
+    while(getline(re_in, line)){
+        vector<string> each;
+        my_split(line, ',', each); //each里包含 用户ID 充值金额 充值时间
+        if(each[0] == m_user.m_id) { //记录
+            re_add.push_back(each[1]);
+        } else{
+            continue;
+        }
+    }
+    re_in.close();
+    //生成计算表达式的 开始全为+的内容 得到 a + b + c的形式
+    for(auto it : re_add){
+        exp += get_number(it) + " + ";
+    }
+    //需要去除最后的" + "!
+    exp = exp.substr(0, exp.length()-3);
+
+    //扫描订单文件
+    ifstream odr_in(order_file);
+    if(!odr_in){
+        cout << "Error: open file failed! " << order_file;
+        return ;
+    }
+    //为了区分余额是+还是-，同时更方便地生成计算式子定义如下结构
+    enum symbol{ //有1和-1两种，代表正负
+        POS = 1,
+        NEG = -1
+    };
+    typedef struct {
+        symbol s;
+        string price;
+    }price_t;
+
+    price_t p_tmp;
+    map<string, vector<price_t>> odr_map;
+    getline(odr_in, line); //第一行表头
+    while(getline(odr_in, line)){
+        vector<string> each;
+        my_split(line, ',', each);
+        if(each[5] == m_user.m_id) {//作为卖家
+            p_tmp.s = POS;
+            p_tmp.price = each[2];
+            odr_map[each[3]].push_back(p_tmp);
+        }
+        else if(each[6] == m_user.m_id) {//作为买家
+            p_tmp.s = NEG;
+            p_tmp.price = each[2];
+            odr_map[each[3]].push_back(p_tmp);
+        }
+    }
+    //填写a + b + c之后的内容
+    for(auto it : odr_map){
+        if(it.first == "1"){//系数为1不需要括号和乘号
+            for(auto tmp : it.second){
+                if(tmp.s == POS){//卖出商品
+                    exp += " + " + get_number(tmp.price);
+                }else{ //NEG
+                    exp += " - " + get_number(tmp.price);
+                }
+            }
+        }
+        else {//系数大于1需要括号和乘号
+            //TODO: 正数负数公因数的提取，比如 3*(-1-2) 还是 -3*(1+2)？？？
+            bool all_neg = false; //是否全部为负数
+            bool be_first = true; //是否是()内第一个数字
+            for(const auto& tmp : it.second){
+                if(tmp.s == POS){
+                    all_neg = true;
+                    break;
+                }
+            }
+            int the_count = it.second.size(); //second就是成交数量一致的那些商品单价
+            if(all_neg){ //全为负数并且个数>1则将符号提到括号外 即 -c*(
+                if( the_count > 1)
+                    exp += " - " + it.first + " * (";
+                else if(the_count == 1) //只有一个数字就不加括号
+                    exp += " - " + it.first + " * ";
+                else ;
+            }else{ //不全为负数则 +c*(
+                if( the_count > 1)
+                    exp += " + " + it.first + " * (";
+                else if(the_count == 1)
+                    exp += " + " + it.first + " * ";
+                else ;
+            }
+            //括号内的填写都是先填符号再填数字，若第一个为正数则不用填 + 号
+            for(auto tmp : it.second){
+                if(all_neg) { //全为负数的话符号已经提前了
+                    if(be_first) { //第一个正数不写 + 号
+                        exp += get_number(tmp.price);
+                        be_first = false;
+                    }else{
+                        exp += " + " + get_number(tmp.price);
+                    }
+                }else{ //不全为负数则判断
+                    if(tmp.s == POS){
+                        if(be_first){ //第一个正数不写 + 号
+                            exp += get_number(tmp.price);
+                            be_first = false;
+                        }else{
+                            exp += " + " + get_number(tmp.price);
+                        }
+                    }
+                    else{ //负数都要写 - 号
+                        exp += " - " + get_number(tmp.price);
+                    }
+                }
+            }
+            if(the_count > 1) //同样数字个数>1 才补上右括号
+                exp += ")";
+        }
+    }
+    cout << "生成式子化简后为: " << exp << endl;
 
 }
 
@@ -141,5 +275,71 @@ void InfoManager::update_my_info() {
     rm_rename(newname, oldname);
 
     cout << "修改成功！" << endl;
+
+}
+
+//充值金额  我的处理是将充值记录到充值文件中，格式为[用户id,充值金额,充值时间]
+//用户文件的余额也修改，但是查看信息的时候是根据充值记录和订单卖出记录和购买记录 通过计算器生成的
+void InfoManager::recharge() const {
+    string add_money;
+
+    float p = 0;
+    while(true){
+        cout << "请输入充值金额(保留一位小数): ";
+        cin >> add_money;
+        try {
+            p = stof(add_money); //用串IO保留一位小数
+            break;
+        }
+        catch (invalid_argument&) {
+            cout << "请输入正确的浮点数！" << endl;
+        }
+        catch (...) {
+            cout << "其他异常！" << endl;
+        }
+    }
+    ostringstream sout;
+    sout << setiosflags(ios::fixed);
+    sout << setprecision(1) << p;
+    add_money = sout.str();  //保留一位小数
+
+    //充值记录附加填写
+    ofstream re_out(recharge_file, ios::app);
+    if(!re_out) {
+        cout << "Usage: open file failed!" << recharge_file << endl;
+        return ;
+    }
+    re_out << m_user.m_id + "," << add_money << "," + get_curtime() << endl;
+    re_out.close();
+
+    //修改用户文件的余额
+    ifstream fin(user_file);
+    ofstream fout("tmp_user_file.txt");
+    if (!fin || !fout) {
+        cout << "Error: open file failed! " << user_file;
+        return;
+    }
+    string line;
+    float balance;
+    getline(fin, line); //第一行表头
+    fout << line << endl; //表头别忘了写到临时文件里！
+    while(getline(fin, line)) {
+        vector<string> each;
+        my_split(line, ',', each); //用,分隔user_file文件中的每一行填充each
+        Users tmp(each); //得到当前这行代表的用户tmp
+        if(tmp.m_id == m_user.m_id) { //需要修改这个用户的余额
+            tmp.m_money += stof(add_money);
+            balance = tmp.m_money;
+            fout << tmp;
+        }else{ //不需要修改直接写
+            fout << line << endl;
+        }
+    }
+    fin.close();
+    fout.close();
+    const char* oldname = "tmp_user_file.txt";
+    const char* newname = user_file.c_str();
+    rm_rename(newname, oldname);
+    cout << "充值成功，当前余额: " << balance << endl;
 
 }

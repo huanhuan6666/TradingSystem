@@ -15,7 +15,7 @@ public:
     int m_status = STATUS_BUYER;
 public:
     Buyers();
-    Buyers(Users &u);
+    explicit Buyers(Users &u);
     void display_cmd() override; //展示命令行
     void buy_goods();   //购买商品
     void search_goods();    //搜索商品

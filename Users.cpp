@@ -34,9 +34,9 @@ bool Users::check_pass() {
     getline(fin, line); //第一行表头
     while(getline(fin, line))
     {
-        vector<string> each;
-        my_split(line, ',', each);
-        Users tmp(each);
+            vector<string> each;
+            my_split(line, ',', each);
+            Users tmp(each);
         if(tmp.m_name == name) //用户名存在
         {
             if(tmp.m_state == "封禁")
@@ -85,7 +85,7 @@ ostream &operator<<(ostream& out, Users &u)
     return out;
 }
 
-Users &Users::operator=(Users &tmp) {
+Users &Users::operator=(const Users &tmp) {
     m_id    =  tmp.m_id   ;
     m_name  =  tmp.m_name ;
     m_pass  =  tmp.m_pass ;
@@ -193,7 +193,8 @@ void Users::sign_up() {
 
     float p = 0;
     while(true){
-        cout << "请输入金额(保留一位小数): ";
+        cout << "请输入首充金额(保留一位小数): ";
+        //TODO: 这里之后可以来个首充优惠啥的 还有什么充值方式之类的
         cin >> money;
         try {
             p = stof(money); //用串IO保留一位小数
@@ -210,7 +211,6 @@ void Users::sign_up() {
     sout << setiosflags(ios::fixed);
     sout << setprecision(1) << p;
     money = sout.str();  //保留一位小数
-
 
     //取id池中最大id + 1生成新的id, 用串IO实现3位编号补零
     ostringstream idout;
@@ -232,6 +232,16 @@ void Users::sign_up() {
     }
     fout << *this; //在文件尾部符加本新用户
     fout.close();
+
+    //充值记录填写
+    ofstream re_out(recharge_file, ios::app);
+    if(!re_out) {
+        cout << "Error: open file failed!" << recharge_file << endl;
+        return ;
+    }
+    //格式为 用户id,充值金额,充值时间
+    re_out << m_id + "," << money << "," + get_curtime() << endl;
+    re_out.close();
 
     cout << "用户创建成功!" << endl;
 

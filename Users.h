@@ -25,8 +25,8 @@ public:
 
 public:
     Users() { ; } //默认构造函数
-    Users(vector<string> &each);
-    Users &operator=(Users &tmp);
+    explicit Users(vector<string> &each);
+    Users &operator=(const Users &tmp);
     bool check_pass(); //密码验证
     void sign_up(); //用户注册，写到了User类中
     void display_my_order(); //查看历史订单: 这个函数在买家卖家中一致，直接写到父类里

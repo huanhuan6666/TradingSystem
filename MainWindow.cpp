@@ -35,6 +35,7 @@ void MainWindow::exit_program() {
 MainWindow::MainWindow() { //程序启动创建UI的时候就检测各种文件，没有则创建并写入相应信息
     ifstream in_file;
     ofstream out_file;
+    //初始化订单文件
     in_file.open(order_file);
     if(!in_file)
     {
@@ -43,6 +44,7 @@ MainWindow::MainWindow() { //程序启动创建UI的时候就检测各种文件�
         out_file.close();
     }
     in_file.close();
+    //初始化命令文件
     in_file.open(commands_file);
     if(!in_file)
     {
@@ -50,6 +52,7 @@ MainWindow::MainWindow() { //程序启动创建UI的时候就检测各种文件�
         out_file.close();
     }
     in_file.close();
+    //初始化商品文件
     in_file.open(commodity_file);
     if(!in_file)
     {
@@ -58,11 +61,21 @@ MainWindow::MainWindow() { //程序启动创建UI的时候就检测各种文件�
         out_file.close();
     }
     in_file.close();
+    //初始化用户文件
     in_file.open(user_file);
     if(!in_file)
     {
         out_file.open(user_file);
         out_file << "用户ID,用户名,密码,联系方式,地址,钱包余额,用户状态" << endl;
+        out_file.close();
+    }
+    in_file.close();
+    //初始化充值文件
+    in_file.open(recharge_file);
+    if(!in_file)
+    {
+        out_file.open(recharge_file);
+        out_file << "用户ID,充值金额,充值时间" << endl;
         out_file.close();
     }
     in_file.close();

@@ -24,6 +24,7 @@ const string commodity_file = "commodity.txt";
 const string commands_file = "commands.txt";
 const string order_file = "order.txt";
 const string user_file = "user.txt";
+const string recharge_file = "recharge.txt";
 
 //一些状态，用在UserSqlHelper中区分买家卖家
 const int STATUS_SELLER = 3;
@@ -31,7 +32,7 @@ const int STATUS_BUYER = 6;
 
 //商品和订单我们只关注其数据，因此表示成结构体就可以
 struct Order_t {
-    Order_t(vector<string> &each) {
+    explicit Order_t(vector<string> &each) {
         o_id = each[0];
         c_id = each[1];
         o_price = stof(each[2]);
@@ -60,7 +61,7 @@ inline ostream& operator<<(ostream& out, Order_t& odr)
 }
 struct Commodity_t {
     Commodity_t() { ; }
-    Commodity_t(vector<string> &each) {
+    explicit Commodity_t(vector<string> &each) {
         c_id = each[0];
         c_name = each[1];
         c_price = stof(each[2]);
@@ -678,14 +679,19 @@ inline void update_commodity(int type, const string &option, const string &value
     rm_rename(newname, oldname);
 
 }
-
-//将sql命令按照 [时间 : 命令]的格式写到文件中
-inline void write_order(const string& cmd)
+//获取当前时间： 年月日时分秒
+inline string get_curtime()
 {
     time_t t = time(nullptr);
     char tmp[32] = { 0 };
     strftime(tmp, sizeof(tmp), "%Y-%m-%d %H:%M:%S", localtime(&t));
     string cur_time(tmp);
+    return cur_time;
+}
+//将sql命令按照 [时间 : 命令]的格式写到文件中
+inline void write_order(const string& cmd)
+{
+    string cur_time(get_curtime());
     ofstream fout(commands_file, ios::app);
     fout << cur_time << ": " << cmd << endl;
     fout.close();

@@ -69,7 +69,8 @@ void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
     //1.查看信息 2.修改信息 3.充值 4.返回用户
     if (cmd == "1")
     {
-        //TODO: 查看信息需要用到计算器，实现计算器
+        //TODO: 查看信息需要用到计算器算余额，实现计算器
+        info_mag.display_my_info();
     }
     else if (cmd == "2")
     {
@@ -77,8 +78,7 @@ void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
     }
     else if(cmd == "3")
     {
-        //TODO: 充值需要维护充值记录
-        //这个充值记录我寻思需要自己维护一张表吧
+        info_mag.recharge();
     }
     else //异常输入
     {

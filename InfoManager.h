@@ -12,11 +12,11 @@ class InfoManager {
 public:
     Users m_user; //信息管理器需要传入使用它的User
 public:
-    InfoManager(Users &user);
-    void display_cmd();  //显示信息管理功能页面
+    explicit InfoManager(Users &user);
+    static void display_cmd();  //显示信息管理功能页面
     void display_my_info(); //查看个人信息
     void update_my_info();  //修改个人信息
-    void recharge();    //充值
+    void recharge() const;    //充值
 };
 
 
