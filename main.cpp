@@ -66,7 +66,7 @@ void manage_choose_Seller(string& cmd, Sellers& seller)
 }
 
 void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
-    //1.查看信息 2.修改信息 3.充值 4.返回用户
+    //1.查看信息 2.修改信息 3.充值 4.返回用户 5.计算器
     if (cmd == "1")
     {
         //TODO: 查看信息需要用到计算器算余额，实现计算器
@@ -79,6 +79,10 @@ void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
     else if(cmd == "3")
     {
         info_mag.recharge();
+    }
+    else if(cmd == "5") //计算器
+    {
+        info_mag.show_calcu();
     }
     else //异常输入
     {

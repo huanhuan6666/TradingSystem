@@ -11,9 +11,9 @@
 using namespace std;
 
 void InfoManager::display_cmd() {
-    cout << "=======================================" << endl;
-    cout << "1.查看信息 2.修改信息 3.充值 4.返回用户主界面" << endl;
-    cout << "=======================================" << endl;
+    cout << "===============================================" << endl;
+    cout << "1.查看信息 2.修改信息 3.充值 4.返回用户主界面 5.计算器" << endl;
+    cout << "===============================================" << endl;
     cout << endl << "输入操作: " ;
 }
 
@@ -105,7 +105,7 @@ void InfoManager::display_my_info() {
             }
         }
         else {//系数大于1需要括号和乘号
-            //TODO: 正数负数公因数的提取，比如 3*(-1-2) 还是 -3*(1+2)？？？
+            //正数负数公因数的提取，比如 3*(-1-2) 还是 -3*(1+2)？？？
             bool all_neg = false; //是否全部为负数
             bool be_first = true; //是否是()内第一个数字
             for(const auto& tmp : it.second){
@@ -157,7 +157,6 @@ void InfoManager::display_my_info() {
     }
     cout << "生成式子化简后为: " << exp << endl;
     //下面就是调用计算器计算余额了
-    //TODO: 就是说生成的式子还有点问题，比如多个购买一次的商品价钱一样但是没有用乘法。。
     float money_res = 0;
     if(m_cal.calculate(exp, money_res)){
         cout << setiosflags(ios::fixed);
@@ -359,4 +358,8 @@ void InfoManager::recharge() const {
     rm_rename(newname, oldname);
     cout << "充值成功，当前余额: " << balance << endl;
 
+}
+
+void InfoManager::show_calcu() {
+    m_cal.display();
 }

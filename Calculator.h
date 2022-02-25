@@ -18,12 +18,11 @@ public:
 public:
     Calculator(); //初始化pri_map
     void display();
-    //TODO: 需要对表达式进行合法性判断
     bool valid_sym(const char& i);
-    bool is_valid(string &exp); //初步合法性判断，并且消除空格
+    bool is_valid(string& exp); //初步合法性判断，并且消除空格
 
-    float cal_top(); //弹出两个val和一个opt计算
-    bool calculate(string &exp, float &res); //计算表达式exp将结果放在res中
+    bool cal_top(float &res); //弹出两个val和一个opt计算
+    bool calculate(string& exp, float& res); //计算表达式exp将结果放在res中
 };
 
 

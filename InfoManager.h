@@ -19,6 +19,7 @@ public:
     void display_my_info(); //查看个人信息
     void update_my_info();  //修改个人信息
     void recharge() const;    //充值
+    void show_calcu();  //计算器
 };
 
 
