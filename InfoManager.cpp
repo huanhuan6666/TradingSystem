@@ -203,14 +203,24 @@ void InfoManager::update_my_info() {
         string name;
         while(true) {
             while (true) {
-                cout << "请输入修改后的用户名(不超过10个字符): ";
+                cout << "请输入修改后的用户名(英文字母不超过10个): ";
                 cin >> name;
-                cout << "这个长度：" << name.length() << endl;
                 if(name.length() > 10) {
-                    cout << "用户名不能超过10个字符!" << endl;
+                    cout << "用户名不能超过10个字符!";
+                    cout << "这个长度：" << name.length() << endl;
                     continue;
-                }else
-                    break;
+                }
+                bool flag = false;
+                for(auto c:name){
+                    if(!isalpha(c)){
+                        cout << "用户名中只能出现英文字母！" << "出错字符: " << c << endl;
+                        flag = true;
+                        break;
+                    }
+                }
+                if(flag)
+                    continue;
+                break;
             }
             //查看用户名是否重复
             if (name_pool.count(name) == 1) //用户名存在
@@ -228,14 +238,23 @@ void InfoManager::update_my_info() {
     {
         string tel;
         while (true){
-            cout << "请输入联系方式(不超过20个字符): ";
+            cout << "请输入联系方式(数字不超过20个): ";
             cin >> tel;
             if(tel.length() > 20) {
-                cout << "联系方式不能超过20个字符!" << endl;
+                cout << "联系方式不能超过20个字符!" << "这个长度: " << tel.length() << endl;
                 continue;
-            } else{
-                break;
             }
+            bool flag = false;
+            for(auto n : tel) {
+                if(!isdigit(n)){
+                    cout << "联系方式中只能出现数字！" << "出错字符: " << n << endl;
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag)
+                continue;
+            break;
         }
         m_user.m_tel = tel;
     }
@@ -243,14 +262,23 @@ void InfoManager::update_my_info() {
     {
         string addr;
         while(true){
-            cout << "请输入地址(不超过20个字符): ";
+            cout << "请输入地址(英文字母不超过40个): ";
             cin >> addr;
-            if(addr.length() > 20){
-                cout << "地址不能超过20个字符!" << endl;
+            if(addr.length() > 40){
+                cout << "地址不能超过40个字符!" << "这个长度: " << addr.length() << endl;
                 continue;
-            } else{
-                break;
             }
+            bool flag = false;
+            for(auto c:addr){
+                if(!isalpha(c)) {
+                    cout << "地址中只能出现英文字母！" << "出错字符: " << c << endl;
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag)
+                continue;
+            break;
         }
         m_user.m_addr = addr;
     }

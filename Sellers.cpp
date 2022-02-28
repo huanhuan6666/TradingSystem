@@ -37,14 +37,25 @@ void Sellers::release_good() {
     string name, price, count, des;
     //商品名称是可以重复的
     while (true) {
-        cout << "请输入商品名称(不超过10个字符): ";
+        cout << "请输入商品名称(英文字母不超过20个): ";
         cin >> name;
-        cout << "这个长度：" << name.length() << endl;
-        if(name.length() > 10) {
-            cout << "商品名称不能超过10个字符!" << endl;
+        if(name.length() > 20) {
+            cout << "商品名称不能超过20个字符!";
+            cout << "这个长度：" << name.length() << endl;
             continue;
-        }else
-            break;
+        }
+        bool flag = false;
+        for(auto c : name){
+            if(!isalpha(c)){
+                cout << "商品名称只能出现英文字母！";
+                cout << "出错字符: " << c << endl;
+                flag = true;
+                break;
+            }
+        }
+        if(flag)
+            continue;
+        break;
     }
 
     float p = 0;
@@ -85,13 +96,25 @@ void Sellers::release_good() {
     count = to_string(q); //获取正整数的字符串
 
     while(true) {
-        cout << "请输入商品描述(不超过100个字符): ";
+        cout << "请输入商品描述(英文字母不超过200个): ";
         cin >> des;
-        if(name.length() > 100) {
-            cout << "商品描述不能超过100个字符!" << endl;
+        if(des.length() > 200) {
+            cout << "商品描述不能超过200个字符!";
+            cout << "这个长度：" << des.length() << endl;
             continue;
-        }else
-            break;
+        }
+        bool flag = false;
+        for(auto c: des){
+            if(!isalpha(c)){
+                cout << "商品描述只能出现英文字母！";
+                cout << "出错字符: " << c << endl;
+                flag = true;
+                break;
+            }
+        }
+        if(flag)
+            continue;
+        break;
     }
     string sql_cmd = "INSERT INTO commodity VALUES (" + name + "," + price + "," + count + "," + des + ")";
     cout << "对应SQL命令为: " << sql_cmd << endl;
@@ -138,9 +161,26 @@ void Sellers::update_my_good() {
     else if(tmp == "2")//tmp == 2
     {
         string des;
-        cout << "请输入被修改商品的描述(超过100个字符部分将被截断): ";
-        cin >> des;
-        sql_cmd = "UPDATE commodity SET 描述 = " + des.substr(0, 99) + " WHERE 商品ID = " + com_id;
+        while(true) {
+            cout << "请输入被修改商品的描述(英文字母不超过200个): ";
+            cin >> des;
+            if(des.length() > 200) {
+                cout << "商品描述不能超过200个字符!" << "这个长度: " << des.length() << endl;
+                continue;
+            }
+            bool flag = false;
+            for(auto c: des){
+                if(!isalpha(c)){
+                    cout << "商品描述只能出现英文字母！" << "出错字符: " << c << endl;
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag)
+                continue;
+            break;
+        }
+        sql_cmd = "UPDATE commodity SET 描述 = " + des + " WHERE 商品ID = " + com_id;
     }
     else //异常输入
     {

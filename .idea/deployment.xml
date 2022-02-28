@@ -5,7 +5,7 @@
       <paths name="VritualBox">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/home/njucs/project1" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

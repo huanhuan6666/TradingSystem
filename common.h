@@ -241,14 +241,17 @@ EMPTY:
         //}
         goto END;
     }
-    cout << endl << "********************************************************************" << endl;
-    cout << "商品ID   名称      价格      上架时间       卖家ID    数量       商品状态" << endl;
+    cout << endl << "***************************************************************************************" << endl;
+    cout << internal;
+    cout << "商品ID     名称            价格              上架时间           卖家ID    数量       商品状态" << endl;
+    //cout << setw(8) << "商品ID" << setw(20) << "名称" << setw(10) << "价格" << setw(15)
+    //     << "上架时间" << setw(8) << "卖家ID" << setw(10) << "数量" << setw(10) << "商品状态" << endl;
     for (const auto& com: res) {
         cout << setiosflags(ios::fixed);
-        cout << com.c_id << '\t' << com.c_name << '\t' << setprecision(1) << com.c_price << '\t'
-             << com.c_time << '\t' << com.m_id << '\t' << com.c_count << '\t' << com.c_state << endl;
+        cout << left << setw(10) << com.c_id << left << setw(20) << com.c_name ;
+        cout << left << setw(15) << setprecision(1) << com.c_price << setw(20) << com.c_time << left << setw(10) << com.m_id << setw(10) << com.c_count << setw(10) << com.c_state << endl;
     }
-    cout << "********************************************************************" << endl;
+    cout << "***************************************************************************************" << endl;
 
 END:
     fin.close();
@@ -293,6 +296,7 @@ inline void show_user(int type, const string &option, const string &value) {
              << user.m_addr << '\t' << setprecision(1) << user.m_money << '\t' << user.m_state << endl;
     }
     cout << "**************************************************************" << endl;
+
 END:
     fin.close();
     return;
@@ -409,7 +413,7 @@ inline void update_user(int type, const string &option, const string &value,
                     exist = true; //ID存在于表中
                     if(tobe_option == "用户状态")
                     {
-                        cout << "查询到相关用户ID条目如下，确认要封禁该用户吗?" << endl;
+                        cout << "查询到相关用户ID条目如下，确认要封禁该用户吗?将会下架该用户发布的商品" << endl;
                         cout << "*********************************************" << endl;
                         cout << "用户ID   用户名     联系方式     地址     钱包余额" << endl;
                         cout << setiosflags(ios::fixed);
