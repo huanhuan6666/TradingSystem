@@ -208,8 +208,13 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
 
             //取id池中最大id + 1生成新的id, 用串IO实现3位编号补零
             ostringstream idout;
-            idout << setw(3) <<setfill('0') << stoi((*id_pool.rbegin()).substr(1, 3)) + 1;
-            string new_id = "M" + idout.str();
+            string new_id;
+            if(id_pool.empty()){ //一件商品都没有则直接M000
+                new_id = "M001";
+            }else {
+                idout << setw(3) << setfill('0') << stoi((*id_pool.rbegin()).substr(1, 3)) + 1;
+                new_id = "M" + idout.str();
+            }
             //获取上架时间 年-月-日
             time_t t = time(nullptr);
             char tmp[32] = { 0 };

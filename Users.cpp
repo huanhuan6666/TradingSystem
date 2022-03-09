@@ -255,8 +255,13 @@ void Users::sign_up() {
 
     //取id池中最大id + 1生成新的id, 用串IO实现3位编号补零
     ostringstream idout;
-    idout << setw(3)<<setfill('0') << stoi((*id_pool.rbegin()).substr(1, 3)) + 1;
-    string new_id = "U" + idout.str();
+    string new_id;
+    if(id_pool.empty()) { //一个用户都没有需要生成U000
+        new_id = "U001";
+    }else { //有用户的话则按顺序生成
+        idout << setw(3) << setfill('0') << stoi((*id_pool.rbegin()).substr(1, 3)) + 1;
+        new_id = "U" + idout.str();
+    }
     //填写对象属性则新用户创建完成！
     m_id    =   new_id;
     m_name  =   name;

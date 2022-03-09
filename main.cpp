@@ -102,6 +102,7 @@ void manage_choose_User(string& cmd, Users &my_user)
         {
             manage_choose_Buyer(choose, my_buyer);
             my_buyer.display_cmd();
+            cin.sync();
             cin >> choose;
         }
         cout << "您已经成功切换到用户主界面" << endl;
@@ -116,6 +117,7 @@ void manage_choose_User(string& cmd, Users &my_user)
         {
             manage_choose_Seller(choose, my_seller);
             my_seller.display_cmd();
+            cin.sync();
             cin >> choose;
         }
         cout << "您已经成功切换到用户主界面" << endl;
@@ -130,6 +132,7 @@ void manage_choose_User(string& cmd, Users &my_user)
         {
             manage_choose_InfoManager(choose, info_mag);
             info_mag.display_cmd();
+            cin.sync();
             cin >> choose;
         }
         cout << "您已经成功切换到用户主界面" << endl;
@@ -189,6 +192,7 @@ void manage_choose_UI(string& choose)
             {
                 manage_choose_Admin(cmd, my_admin);
                 my_admin.cmd_display(); //展示管理员界面
+                cin.sync();
                 cin >> cmd;
             }
             cout << "您已经成功注销管理员登录" << endl;
@@ -213,6 +217,7 @@ void manage_choose_UI(string& choose)
             {
                 manage_choose_User(cmd, my_user);
                 my_user.display_cmd();
+                cin.sync();
                 cin >> cmd;
             }
             cout << "您已经成功注销用户登录" << endl;
@@ -227,6 +232,7 @@ void manage_choose_UI(string& choose)
 }
 
 int main() {
+    //TODO: 对于输入时空格的处理(
     MainWindow UI;
     string choose;
     //1.管理员登录 2.用户注册 3.用户登录 4.退出程序
@@ -236,6 +242,7 @@ int main() {
     {
         manage_choose_UI(choose); //处理选择
         UI.cmd_display();
+        cin.sync();
         cin >> choose;
     }
     cout << "您已经成功退出程序" << endl;

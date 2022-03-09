@@ -15,6 +15,7 @@ void Calculator::display() {
     cout << "输入exit即可退出" << endl;
     while (true) {
         cout << "请输入表达式(exit退出): ";
+        cin.sync(); //清空缓冲区
         getline(cin, exp);
         if (exp == "exit") {
             cout << "======欢迎下次使用======" << endl;
@@ -23,7 +24,7 @@ void Calculator::display() {
         if (calculate(exp, res)) {
             cout << setiosflags(ios::fixed);
             if (res == int(res)) //没有小数
-                cout << "计算结果为: " << int(res) << endl;
+                cout << "计算结果为(整数): " << int(res) << endl;
             else //有小数
                 cout << "计算结果为(保留一位小数): " << setprecision(1) << res << endl;
         }
@@ -40,9 +41,6 @@ Calculator::Calculator() {
     pri_map['('] = 3;
 }
 
-//TODO: 对于各种错误情况的处理还没有完善，目前已知的bug:
-//可能是由于连续计算没有清理栈导致的
-//比如: 1-第一次输入就会宕，但之后输入会输出一个UB值
 bool Calculator::is_valid(string& exp) {
     if (!exp.empty())
     {
@@ -51,6 +49,14 @@ bool Calculator::is_valid(string& exp) {
         for (int i = 0; i < size; i++) {
             if (exp[i] >= '0' && exp[i] <= '9') {
                 index.push_back(i);
+                continue;
+            }
+            if(exp[i] == '.'){
+                if(i-1>=0 && exp[i-1]==' ' ||
+                    i+1<=size-1 && exp[i+1]==' '){
+                    cout << "Error: 小数点两边不能有空格！" << endl;
+                    return false;
+                }
             }
         }
         int i_size = index.size();

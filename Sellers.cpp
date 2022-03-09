@@ -97,19 +97,29 @@ void Sellers::release_good() {
 
     while(true) {
         cout << "请输入商品描述(英文字母不超过200个): ";
-        cin >> des;
+//        cin >> des;
+        cin.sync(); //清空缓冲区
+        getline(cin, des);
+        if(des.length() == 0){
+            cout << "商品描述不能为空！" << endl;
+            continue;
+        }
         if(des.length() > 200) {
             cout << "商品描述不能超过200个字符!";
             cout << "这个长度：" << des.length() << endl;
             continue;
         }
         bool flag = false;
-        for(auto c: des){
-            if(!isalpha(c)){
-                cout << "商品描述只能出现英文字母！";
+        for(auto& c: des){
+            if(!isalpha(c) && c != ' '){
+                cout << "商品描述只能出现英文字母和空格！";
                 cout << "出错字符: " << c << endl;
                 flag = true;
                 break;
+            }
+            if(c == ' ') //这里决定把空格替换成下划线 变相支持空格嘻嘻
+            {
+                c = '_';
             }
         }
         if(flag)
@@ -163,17 +173,27 @@ void Sellers::update_my_good() {
         string des;
         while(true) {
             cout << "请输入被修改商品的描述(英文字母不超过200个): ";
-            cin >> des;
+//            cin >> des;
+            cin.sync(); //清空缓冲区
+            getline(cin, des);
+            if(des.length() == 0){
+                cout << "商品描述不能为空！" << endl;
+                continue;
+            }
             if(des.length() > 200) {
                 cout << "商品描述不能超过200个字符!" << "这个长度: " << des.length() << endl;
                 continue;
             }
             bool flag = false;
-            for(auto c: des){
-                if(!isalpha(c)){
-                    cout << "商品描述只能出现英文字母！" << "出错字符: " << c << endl;
+            for(auto& c: des){
+                if(!isalpha(c) && c != ' '){
+                    cout << "商品描述只能出现英文字母和空格！" << "出错字符: " << c << endl;
                     flag = true;
                     break;
+                }
+                if(c == ' ') //这里决定把空格替换成下划线 变相支持空格嘻嘻
+                {
+                    c = '_';
                 }
             }
             if(flag)
