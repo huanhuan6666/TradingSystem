@@ -106,11 +106,11 @@ void InfoManager::display_my_info() {
         }
         else {//系数大于1需要括号和乘号
             //正数负数公因数的提取，比如 3*(-1-2) 还是 -3*(1+2)？？？
-            bool all_neg = false; //是否全部为负数
+            bool all_neg = true; //是否全部为负数
             bool be_first = true; //是否是()内第一个数字
             for(const auto& tmp : it.second){
                 if(tmp.s == POS){
-                    all_neg = true;
+                    all_neg = false;
                     break;
                 }
             }
@@ -324,13 +324,31 @@ void InfoManager::update_my_info() {
 
 //充值金额  我的处理是将充值记录到充值文件中，格式为[用户id,充值金额,充值时间]
 //用户文件的余额也修改，但是查看信息的时候是根据充值记录和订单卖出记录和购买记录 通过计算器生成的
-void InfoManager::recharge() const {
+void InfoManager::recharge() {
     string add_money;
 
     float p = 0;
     while(true){
         cout << "请输入充值金额(保留一位小数): ";
-        cin >> add_money;
+        cin.sync();
+        getline(cin, add_money);
+        if(add_money.empty()){
+            cout << "输入不能为空！" << endl;
+            continue;
+        }
+        bool flag = false;
+        int tmp_count = 0;
+        for (auto& c : add_money) {
+            if (!isdigit(c) && c != ' ' && c != '.' || tmp_count > 1) {
+                cout << "请输入正确的浮点数！" << endl;
+                flag = true;
+                break;
+            }
+            if (c == '.') tmp_count++;
+        }
+        if(flag){
+            continue;
+        }
         try {
             p = stof(add_money); //用串IO保留一位小数
             break;
@@ -385,7 +403,7 @@ void InfoManager::recharge() const {
     const char* newname = user_file.c_str();
     rm_rename(newname, oldname);
     cout << "充值成功，当前余额: " << balance << endl;
-
+    m_user.m_money = balance;
 }
 
 void InfoManager::show_calcu() {

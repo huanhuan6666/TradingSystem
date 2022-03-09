@@ -68,11 +68,26 @@ void Buyers::buy_goods() {
         return ;
     }
 OUT:
-    cout << "请输入购买数量(正整数): ";
     int q = 0;
     while(true){
-        cout << "请输入商品数量(正整数): ";
-        cin >> the_count;
+        cout << "请输入购买数量(正整数): ";
+        cin.sync();
+        getline(cin, the_count);
+        if(the_count.empty()){
+            cout << "输入不能为空！" << endl;
+            continue;
+        }
+        bool flag = false;
+        for(auto &c:the_count){
+            if(!isdigit(c) && c!=' ' || c=='.'){ //有小数点就报错
+                cout << "请输入正确的正整数！" << endl;
+                flag = true;
+                break;
+            }
+        }
+        if(flag){
+            continue;
+        }
         try {
             q = stoi(the_count); //用串IO保留一位小数
             break;
@@ -93,8 +108,8 @@ OUT:
         return;
     }
     else{ //修改数组中商品数量和自己的余额，其实没什么意义，比较SQL解析的时候只根据指令重新扫描文件
-        //get_it->c_count -= q;
-        //m_money -= (get_it->c_price) * (float)q;
+        get_it->c_count -= q;
+        m_money -= (get_it->c_price) * (float)q;
     }
 
     the_count = to_string(q); //获取购买数量字符串

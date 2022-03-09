@@ -61,7 +61,21 @@ void Sellers::release_good() {
     float p = 0;
     while(true){
         cout << "请输入商品价格(保留一位小数): ";
-        cin >> price;
+        cin.sync();
+        getline(cin, price);
+        int tmp_count = 0;
+        bool flag = false;
+        for (auto& c : price) {
+            if (!isdigit(c) && c != ' ' && c != '.' || tmp_count > 1) {
+                cout << "请输入正确的浮点数！" << endl;
+                flag = true;
+                break;
+            }
+            if (c == '.') tmp_count++;
+        }
+        if (flag) {
+            continue;
+        }
         try {
             p = stof(price); //用串IO保留一位小数
             break;
@@ -81,7 +95,23 @@ void Sellers::release_good() {
     int q = 0;
     while(true){
         cout << "请输入商品数量(正整数): ";
-        cin >> count;
+        cin.sync();
+        getline(cin, count);
+        if(count.empty()){
+            cout << "输入不能为空！" << endl;
+            continue;
+        }
+        bool flag = false;
+        for(auto &c:count){
+            if(!isdigit(c) && c!=' ' || c=='.'){ //有小数点就报错
+                cout << "请输入正确的正整数！" << endl;
+                flag = true;
+                break;
+            }
+        }
+        if(flag){
+            continue;
+        }
         try {
             q = stoi(count); //用串IO保留一位小数
             break;
@@ -151,7 +181,21 @@ void Sellers::update_my_good() {
         float p = 0;
         while(true) {
             cout << "请输入被修改商品的价格(保留一位小数): ";
-            cin >> price;
+            cin.sync();
+            getline(cin, price);
+            int tmp_count = 0;
+            bool flag = false;
+            for (auto& c : price) {
+                if (!isdigit(c) && c != ' ' && c != '.' || tmp_count > 1) {
+                    cout << "请输入正确的浮点数！" << endl;
+                    flag = true;
+                    break;
+                }
+                if (c == '.') tmp_count++;
+            }
+            if (flag) {
+                continue;
+            }
             try {
                 p = stof(price); //用串IO保留一位小数
                 break;

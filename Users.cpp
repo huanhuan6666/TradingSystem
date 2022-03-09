@@ -236,7 +236,21 @@ void Users::sign_up() {
     while(true){
         cout << "请输入首充金额(保留一位小数): ";
         //TODO: 这里之后可以来个首充优惠啥的 还有什么充值方式之类的
-        cin >> money;
+        cin.sync();
+        getline(cin, money);
+        int tmp_count = 0;
+        bool flag = false;
+        for (auto& c : money) {
+            if (!isdigit(c) && c != ' ' && c != '.' || tmp_count > 1) {
+                cout << "请输入正确的浮点数！" << endl;
+                flag = true;
+                break;
+            }
+            if (c == '.') tmp_count++;
+        }
+        if (flag) {
+            continue;
+        }
         try {
             p = stof(money); //用串IO保留一位小数
             break;
