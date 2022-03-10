@@ -94,8 +94,10 @@ void SqlHelper::sql_analyse(const string &cmd) {
         }
         else if(where == "commodity")
         {
-            update_commodity(0, option, value, tobe_option, tobe_value);
-            write_order(cmd); //下架成功后记录到order文件
+            int ret = update_commodity(0, option, value, tobe_option, tobe_value);
+            if(ret == 1) {
+                write_order(cmd); //下架成功后记录到order文件
+            }
         }
         else //
         {
@@ -397,11 +399,17 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
         string value = str_table[9];
         if(where == "user")
         {
-            update_user(user_status, option, value, tobe_option, tobe_value);
+            int ret = update_user(user_status, option, value, tobe_option, tobe_value);
+            if(ret == 1){
+                write_order(cmd); //修改成功后才记录
+            }
         }
         else if(where == "commodity")
         {
-            update_commodity(user_status, option, value, tobe_option, tobe_value, user_id); //别忘了传入user_id
+            int ret = update_commodity(user_status, option, value, tobe_option, tobe_value, user_id); //别忘了传入user_id
+            if(ret == 1){
+                write_order(cmd); //修改成功后才记录
+            }
         }
         else //
         {
