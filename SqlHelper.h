@@ -12,7 +12,7 @@ using namespace std;
 //呃好吧把他做成了一个父类，只作为Admin的组件，派生出UserSqlHelper作为User的组件
 class SqlHelper {
 public:
-
+    int next; //用于管理员封禁用户时决定是否继续下架商品，如果放弃封禁则不执行下架指令
     vector<string> str_table;
 public:
     virtual void sql_analyse(const string &cmd);

@@ -13,12 +13,13 @@
 using namespace std;
 
 void SqlHelper::sql_analyse(const string &cmd) {
-    write_order(cmd); //记录到order文件
+//    write_order(cmd); //记录到order文件
     my_split(cmd, ' ', str_table); //用空格分隔cmd并填充str_table
     int size = str_table.size();
     string first(str_table[0]);
     if(first == "SELECT") //查询命令
     {
+        write_order(cmd); //所有SELECT指令都记录
         if(str_table[1] != "*" || str_table[2] != "FROM")
         {
             cout << "Usage: 无法解析命令 " << cmd << " error: " << str_table[1] << " " << str_table[2] << endl;
@@ -85,11 +86,16 @@ void SqlHelper::sql_analyse(const string &cmd) {
         string value = str_table[9];
         if(where == "user")
         {
-            update_user(0, option, value, tobe_option, tobe_value);
+            int ret = update_user(0, option, value, tobe_option, tobe_value);
+            if(ret == 1) {//确认要继续下架封禁用户的商品
+                write_order(cmd); //封禁完成后记录到order文件
+                next = 6; //来个magic num
+            }
         }
         else if(where == "commodity")
         {
             update_commodity(0, option, value, tobe_option, tobe_value);
+            write_order(cmd); //下架成功后记录到order文件
         }
         else //
         {
@@ -116,12 +122,13 @@ UserSqlHelper::UserSqlHelper(int& status, string &id) {
 //用户解析SQL可以查看和修改的内容会比管理员SqlHelper的少，比如UPDATE和SELECT
 //还有用户状态下的INSERT命令就需要大写特写了
 void UserSqlHelper::sql_analyse(const string &cmd) {
-    write_order(cmd); //记录到order文件
+//    write_order(cmd); //记录到order文件
     my_split(cmd, ' ', str_table); //用空格分隔cmd并填充str_table
     int size = str_table.size();
     string first(str_table[0]);
     if(first == "SELECT") //查询命令
     {
+        write_order(cmd); //所有SELECT都记录到order文件
         if(str_table[1] != "*" || str_table[2] != "FROM")
         {
             cout << "Usage: 无法解析命令 " << cmd << " error: " << str_table[1] << " " << str_table[2] << endl;
@@ -243,6 +250,7 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
             string tmp_choose;
             cin >> tmp_choose;
             if(tmp_choose == "y") { //确认发布则附加写新商品
+                write_order(cmd); //确认发布后才记录到order文件
                 ofstream fout(commodity_file, ios::app);
                 if (!fout) {
                     cout << "Error: open file failed! " << user_file;
@@ -251,6 +259,7 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
                 fout << new_com;
                 fout.close();
                 cout << "发布商品成功！" << endl;
+
             }else{
                 cout << "操作已放弃" << endl;
                 return ;
@@ -265,6 +274,7 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
             string tmp_choose;
             cin >> tmp_choose;
             if(tmp_choose == "y") {
+                write_order(cmd); //确认购买才记录到order文件
                 //修改用户的余额
                 string line;
                 float balance;
@@ -362,6 +372,9 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
                 cout << "交易状态: " << "交易成功" << endl;
                 cout << "您的余额: " << setprecision(1) << balance << endl;
                 cout << "*************************" << endl;
+            }else{
+                cout << "操作已放弃" << endl;
+                return ;
             }
         }
         else{ //待补

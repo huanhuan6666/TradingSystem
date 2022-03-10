@@ -11,7 +11,7 @@
 // 当然内部包含计算器的实现
 class InfoManager {
 public:
-    Users m_user; //信息管理器需要传入使用它的User
+    Users& m_user; //信息管理器需要传入使用它的User 换成引用！以数据为中心！
     Calculator m_cal; //计算器！
 public:
     explicit InfoManager(Users &user);

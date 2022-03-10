@@ -17,8 +17,8 @@ void InfoManager::display_cmd() {
     cout << endl << "输入操作: " ;
 }
 
-InfoManager::InfoManager(Users &user) {
-    m_user = user;
+InfoManager::InfoManager(Users &user) : m_user(user){
+    ;
 }
 
 //传入的num字符串是个整数比如10.0则返回10，若10.2返回10.2

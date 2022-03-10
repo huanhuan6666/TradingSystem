@@ -241,9 +241,9 @@ EMPTY:
         //}
         goto END;
     }
-    cout << endl << "***************************************************************************************" << endl;
+    cout << endl << "*******************************************************************************************" << endl;
     cout << internal;
-    cout << "商品ID     名称            价格              上架时间           卖家ID    数量       商品状态" << endl;
+    cout << "商品ID     名称                 价格              上架时间           卖家ID    数量       商品状态" << endl;
     //cout << setw(8) << "商品ID" << setw(20) << "名称" << setw(10) << "价格" << setw(15)
     //     << "上架时间" << setw(8) << "卖家ID" << setw(10) << "数量" << setw(10) << "商品状态" << endl;
     for (const auto& com: res) {
@@ -251,7 +251,7 @@ EMPTY:
         cout << left << setw(10) << com.c_id << left << setw(20) << com.c_name ;
         cout << left << setw(15) << setprecision(1) << com.c_price << setw(20) << com.c_time << left << setw(10) << com.m_id << setw(10) << com.c_count << setw(10) << com.c_state << endl;
     }
-    cout << "***************************************************************************************" << endl;
+    cout << "*******************************************************************************************" << endl;
 
 END:
     fin.close();
@@ -288,14 +288,14 @@ inline void show_user(int type, const string &option, const string &value) {
         cout << "*****************************" << endl;
         goto END;
     }
-    cout << endl << "*************************************************************" << endl;
-    cout << "用户ID   用户名      联系方式      地址       钱包余额     用户状态" << endl;
+    cout << endl << "*******************************************************************************************" << endl;
+    cout << "用户ID     用户名               联系方式             地址                钱包余额         用户状态" << endl;
     for (const auto& user: res) {
         cout << setiosflags(ios::fixed);
-        cout << user.m_id << '\t' << user.m_name << '\t' << user.m_tel << '\t'
-             << user.m_addr << '\t' << setprecision(1) << user.m_money << '\t' << user.m_state << endl;
+        cout << left << setw(10) << user.m_id << left << setw(20) << user.m_name << left << setw(20) << user.m_tel << left << setw(20)
+             << user.m_addr << left << setw(15) << setprecision(1) << user.m_money << left << setw(20) << user.m_state << endl;
     }
-    cout << "**************************************************************" << endl;
+    cout << "*******************************************************************************************" << endl;
 
 END:
     fin.close();
@@ -355,14 +355,14 @@ inline void show_order(int type, const string &option, const string &value) {
         cout << "*****************************" << endl;
         goto END ;
     }
-    cout << endl << "************************************************************" << endl;
-    cout << "订单ID     商品ID   交易单价   数量   交易时间    买家ID   卖家ID" << endl;
+    cout << endl << "***********************************************************************************" << endl;
+    cout << "订单ID     商品ID    交易单价         数量          交易时间          买家ID     卖家ID" << endl;
     for (const auto& odr: res) {
         cout << setiosflags(ios::fixed);
-        cout << odr.o_id << '\t' << odr.c_id << '\t' << setprecision(1) << odr.o_price << '\t'
-             << odr.o_count << '\t' << odr.o_time << '\t' << odr.m_buy_id << '\t' << odr.m_id << endl;
+        cout << left << setw(10) << odr.o_id << left << setw(10) << odr.c_id << left << setw(15) << setprecision(1) << odr.o_price << left << setw(10)
+             << odr.o_count << left << setw(20) << odr.o_time << left << setw(10) << odr.m_buy_id << left << setw(10) << odr.m_id << endl;
     }
-    cout << "************************************************************" << endl;
+    cout << "***********************************************************************************" << endl;
 END:
     fin.close();
     return ;
@@ -386,19 +386,20 @@ inline void rm_rename(const char *newname, const char *oldname)
 //update命令同样用type支持各种模式,
 //将option==value的条目的tobe_option更新成tobe_value
 //更新文件的方式是典中典的重写临时文件然后删除原文件改名
-inline void update_user(int type, const string &option, const string &value,
+inline int update_user(int type, const string &option, const string &value,
                         const string &tobe_option, const string &tobe_value) {
     vector<Users> res; //这里的Users用的是class类
     ifstream fin(user_file);
     ofstream fout("tmp_user_file.txt");
     if (!fin || !fout) {
         cout << "Error: open file failed! " << user_file;
-        return;
+        return -1;
     }
     string line;
     getline(fin, line); //第一行表头
     fout << line << endl; //表头别忘了写到临时文件里！
     //cout << line;
+    int flag = 0; //这个flag用于封禁用户时是否决定继续下架指令
     if (type == 0)
     {
         bool exist = false; //用户表中是否存在该用户
@@ -427,6 +428,7 @@ inline void update_user(int type, const string &option, const string &value,
                             tmp.m_state = "封禁";
                             fout << tmp;   //User类中重载了<<
                             cout << "封禁成功" << endl;
+                            flag = 1; //需要继续下架该用户所有商品SQL
                         }
                         else {  //放弃则不改变原文件内容继续写tmpfile
                             cout << "操作已放弃" << endl;
@@ -449,7 +451,7 @@ inline void update_user(int type, const string &option, const string &value,
                 cout << "Usage: 选项 " << tobe_option << "暂不支持, 待补" << endl;
                 fin.close();
                 fout.close();
-                return;
+                return -1;
             }
         }
         if(!exist)  //整张表都找不到这个ID的条目
@@ -458,9 +460,11 @@ inline void update_user(int type, const string &option, const string &value,
             cout << "用户表中不存在此ID的条目" << endl;
             cout << "********************" << endl;
         }
+        return flag; //只有flag=1时才继续下架商品
     }
     else {
         //待补
+        return -1;
     }
     //重命名覆盖
     fin.close();
@@ -498,6 +502,7 @@ inline void update_commodity(int type, const string &option, const string &value
             {
                 if(tmp.m_id == value) //确实要改
                 {
+                    exist = true;
                     if(tobe_option == "商品状态")
                     {
                         tmp.c_state = "已下架";
@@ -559,11 +564,21 @@ inline void update_commodity(int type, const string &option, const string &value
                 return;
             }
         }
-        if(!exist)
-        {
-            cout << "******************" << endl;
-            cout << "商品表中不存在相关条目" << endl;
-            cout << "******************" << endl;
+        if(option == "卖家ID"){
+            if(exist){
+                cout << "该用户发布的所有商品已经成功下架" << endl;
+            }else{
+                cout << "该用户未发布任何商品" << endl;
+            }
+        }
+        else if(option == "商品ID") {
+            if (!exist) {
+                cout << "******************" << endl;
+                cout << "商品表中不存在相关条目" << endl;
+                cout << "******************" << endl;
+            }
+        }else{
+            //
         }
     }
     else if(type == 3) //卖家模式: 只能修改自己已经发布的商品，这里只实现了卖家下架自己的商品

@@ -132,11 +132,11 @@ void manage_choose_User(string& cmd, Users &my_user)
         {
             manage_choose_InfoManager(choose, info_mag);
             info_mag.display_cmd();
-            my_user = info_mag.m_user; //XXX更新user的信息！！！尤其重要！因为my_user并没有实时更新掉！
             cin.sync();
             cin >> choose;
         }
-        my_user = info_mag.m_user; //XXX更新user的信息！！！尤其重要！因为my_user并没有实时更新掉！
+//        my_user = info_mag.m_user; //XXX更新user的信息！！！尤其重要！因为my_user并没有实时更新掉！
+        //已经通过引用实时更新了！
         cout << "您已经成功切换到用户主界面" << endl;
     }
     else //异常输入
