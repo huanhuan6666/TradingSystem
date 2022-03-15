@@ -243,6 +243,10 @@ bool Calculator::calculate(string& exp, float& res) {
                 opt.push(exp[i]);
         }
     }
+    if(val.empty()){
+        cout << "无效表达式！" << endl;
+        return false;
+    }
     res = val.top();//由于此前的哨兵处理，最后num栈中只有唯一一个数，即最后结果
     while (!val.empty()) val.pop(); //清空栈
     while (!opt.empty()) opt.pop();

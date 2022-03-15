@@ -38,6 +38,7 @@ void Sellers::release_good() {
     //商品名称是可以重复的
     while (true) {
         cout << "请输入商品名称(英文字母不超过20个): ";
+        cin.sync();
         cin >> name;
         if(name.length() > 20) {
             cout << "商品名称不能超过20个字符!";
@@ -142,7 +143,7 @@ void Sellers::release_good() {
         bool flag = false;
         for(auto& c: des){
             if(!isalpha(c) && c != ' '){
-                cout << "商品描述只能出现英文字母和空格！";
+                cout << "商品描述只能出现英文字符！";
                 cout << "出错字符: " << c << endl;
                 flag = true;
                 break;
@@ -166,9 +167,11 @@ void Sellers::release_good() {
 void Sellers::update_my_good() {
     string sql_cmd, com_id;
     cout << "请输入被修改商品的ID: ";
+    cin.sync();
     cin >> com_id;
     string tmp;
     cout << "请输入被修改商品的属性(1.价格 2.描述): ";
+    cin.sync();
     cin >> tmp;
     if(tmp != "1" && tmp != "2")
     {
@@ -231,7 +234,7 @@ void Sellers::update_my_good() {
             bool flag = false;
             for(auto& c: des){
                 if(!isalpha(c) && c != ' '){
-                    cout << "商品描述只能出现英文字母和空格！" << "出错字符: " << c << endl;
+                    cout << "商品描述只能出现英文字符！" << "出错字符: " << c << endl;
                     flag = true;
                     break;
                 }
@@ -258,6 +261,7 @@ void Sellers::update_my_good() {
 void Sellers::off_my_shelf() {
     string com_id;
     cout << "请输入要下架的商品ID: ";
+    cin.sync();
     cin >> com_id;
     string sql_cmd = "UPDATE commodity SET 商品状态 = 已下架 WHERE 商品ID = " + com_id;
     cout << "对应SQL命令为: " << sql_cmd << endl;

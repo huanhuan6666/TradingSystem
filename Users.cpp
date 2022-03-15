@@ -24,6 +24,7 @@ Users::Users(vector<string> &each) {
 bool Users::check_pass() {
     string name, pass, line;
     cout << "请输入用户名: ";
+    cin.sync();
     cin >> name;
     ifstream fin(user_file);
     if(!fin)
@@ -46,6 +47,7 @@ bool Users::check_pass() {
                 return false;
             }
             cout << "请输入密码: ";
+            cin.sync();
             cin >> pass;
             if(pass == tmp.m_pass)
             {
@@ -139,6 +141,7 @@ void Users::sign_up() {
     while(true) {
         while (true) {
             cout << "请输入新用户名(英文字母不超过10个): ";
+            cin.sync();
             cin >> name;
             if(name.length() > 10) {
                 cout << "用户名不能超过10个字符!";
@@ -170,6 +173,7 @@ void Users::sign_up() {
 
     while (true){
         cout << "请输入用户密码(小写字母和数字不超过20个): ";
+        cin.sync();
         cin >> pass;
         if(pass.length() > 20) {
             cout << "密码不能超过20个字符! ";
@@ -192,6 +196,7 @@ void Users::sign_up() {
 
     while (true){
         cout << "请输入联系方式(数字不超过20个): ";
+        cin.sync();
         cin >> tel;
         if(tel.length() > 20) {
             cout << "联系方式不能超过20个字符!" << "这个长度: " << tel.length() << endl;
@@ -213,6 +218,7 @@ void Users::sign_up() {
 
     while(true){
         cout << "请输入地址(英文字母不超过40个): ";
+        cin.sync();
         cin >> addr;
         if(addr.length() > 40){
             cout << "地址不能超过40个字符!" << "这个长度: " << addr.length() << endl;

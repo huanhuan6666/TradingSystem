@@ -22,6 +22,7 @@ void Administrator::cmd_display() {
 void Administrator::search_goods() {
     string com_name;
     cout << "请输入商品名称: ";
+    cin.sync();
     cin >> com_name;
     sql_cmd = "SELECT * FROM commodity WHERE 名称 CONTAINS " + com_name;
     cout << "对应SQL命令为: " << sql_cmd << endl;
@@ -49,6 +50,7 @@ void Administrator::display_all_orders() {
 void Administrator::off_the_shelf() {
     string com_id;
     cout << "请输入要下架的商品ID: ";
+    cin.sync();
     cin >> com_id;
     sql_cmd = "UPDATE commodity SET 商品状态 = 已下架 WHERE 商品ID = " + com_id;
     cout << "对应SQL命令为: " << sql_cmd << endl;
@@ -58,6 +60,7 @@ void Administrator::off_the_shelf() {
 void Administrator::block_users() {
     string user_id;
     cout << "请输入要封禁的用户ID: ";
+    cin.sync();
     cin >> user_id;
     sql_cmd = "UPDATE user SET 用户状态 = 封禁 WHERE 用户ID = " + user_id;
     cout << "对应SQL命令为: " << sql_cmd << endl;
@@ -73,13 +76,15 @@ void Administrator::block_users() {
 bool Administrator::check_pass() const {
     string name, pass;
     cout << "请输入管理员姓名(默认admin): ";
+    cin.sync();
     cin >> name;
     while(name != admin_name)
     {
         cout << "管理员姓名默认admin，请重新输入: ";
+        cin.sync();
         cin >> name;
     }
-
+    cin.sync();
     cout << "请输入密码: ";
     cin >> pass;
     if(pass == admin_pass) {

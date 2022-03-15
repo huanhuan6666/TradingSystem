@@ -250,6 +250,7 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
             cout << "您确认要发布商品吗?" << endl;
             cout << "请选择(y/n)，输入非y代表放弃本次操作: ";
             string tmp_choose;
+            cin.sync();
             cin >> tmp_choose;
             if(tmp_choose == "y") { //确认发布则附加写新商品
                 write_order(cmd); //确认发布后才记录到order文件
@@ -274,6 +275,7 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
             cout << "您确认要购买吗?" << endl;
             cout << "请选择(y/n)，输入非y代表放弃本次操作: ";
             string tmp_choose;
+            cin.sync();
             cin >> tmp_choose;
             if(tmp_choose == "y") {
                 write_order(cmd); //确认购买才记录到order文件

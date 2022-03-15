@@ -196,6 +196,7 @@ void InfoManager::update_my_info() {
 
     string choose;
     cout << "请选择修改的属性(1.用户名  2.联系方式  3.地址): " ;
+    cin.sync();
     cin >> choose;
 
     if(choose == "1")
@@ -204,6 +205,7 @@ void InfoManager::update_my_info() {
         while(true) {
             while (true) {
                 cout << "请输入修改后的用户名(英文字母不超过10个): ";
+                cin.sync();
                 cin >> name;
                 if(name.length() > 10) {
                     cout << "用户名不能超过10个字符!";
@@ -239,6 +241,7 @@ void InfoManager::update_my_info() {
         string tel;
         while (true){
             cout << "请输入联系方式(数字不超过20个): ";
+            cin.sync();
             cin >> tel;
             if(tel.length() > 20) {
                 cout << "联系方式不能超过20个字符!" << "这个长度: " << tel.length() << endl;
@@ -263,6 +266,7 @@ void InfoManager::update_my_info() {
         string addr;
         while(true){
             cout << "请输入地址(英文字母不超过40个): ";
+            cin.sync();
             cin >> addr;
             if(addr.length() > 40){
                 cout << "地址不能超过40个字符!" << "这个长度: " << addr.length() << endl;

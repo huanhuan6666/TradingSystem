@@ -10,6 +10,8 @@ using namespace std;
 
 void manage_choose_Buyer(string& cmd, Buyers& buyer)
 {
+    cin.sync();
+//    system("cls");
     if(cmd == "1") //查看商品列表
     {
         buyer.display_my_good();
@@ -38,6 +40,8 @@ void manage_choose_Buyer(string& cmd, Buyers& buyer)
 
 void manage_choose_Seller(string& cmd, Sellers& seller)
 {
+    cin.sync();
+//    system("cls");
     if(cmd == "1") //发布商品
     {
         seller.release_good();
@@ -67,6 +71,8 @@ void manage_choose_Seller(string& cmd, Sellers& seller)
 
 void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
     //1.查看信息 2.修改信息 3.充值 4.返回用户 5.计算器
+    cin.sync();
+//    system("cls");
     if (cmd == "1")
     {
         //TODO: 查看信息需要用到计算器算余额，实现计算器
@@ -91,12 +97,15 @@ void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
 }
 void manage_choose_User(string& cmd, Users &my_user)
 {
+    cin.sync();
+//    system("cls");
     string choose;
     if(cmd == "2") //我是买家
     {
         //1.查看商品列表 2.购买商品 3.搜索商品 4.查看历史订单 5.查看商品详细信息 6.返回用户主界面
         Buyers my_buyer(my_user); //通过User初始化Buyer，Buyer从User继承了用户的数据
         my_buyer.display_cmd(); //展示买家主界面
+        cin.sync();
         cin >> choose;
         while(choose != "6") //退出到用户主界面
         {
@@ -112,6 +121,7 @@ void manage_choose_User(string& cmd, Users &my_user)
         //1.发布商品 2.查看发布商品 3.修改商品信息 4.下架商品 5.查看历史订单 6.返回用户主界面
         Sellers my_seller(my_user);
         my_seller.display_cmd(); //展示买家主界面
+        cin.sync();
         cin >> choose;
         while(choose != "6") //退出到用户主界面
         {
@@ -127,6 +137,7 @@ void manage_choose_User(string& cmd, Users &my_user)
         //1.查看信息 2.修改信息 3.充值 4.返回用户
         InfoManager info_mag(my_user); //需要向信息管理器传入使用它的User
         info_mag.display_cmd();
+        cin.sync();
         cin >> choose;
         while(choose != "4") //退出到用户主界面
         {
@@ -148,6 +159,8 @@ void manage_choose_User(string& cmd, Users &my_user)
 void manage_choose_Admin(string& cmd, Administrator &admin)
 {
 //1.查看所有商品 2.搜索商品 3.查看所有订单 4.查看所有用户 5.封禁用户 6.下架商品 7.注销
+    cin.sync();
+//    system("cls");
     if(cmd == "1") //查看所有商品
     {
         admin.display_all_goods();
@@ -181,6 +194,8 @@ void manage_choose_Admin(string& cmd, Administrator &admin)
 
 void manage_choose_UI(string& choose)
 {
+    cin.sync();
+//    system("cls");
     string cmd; //选择命令
     if(choose == "1") //管理员登录
     {
@@ -189,6 +204,7 @@ void manage_choose_UI(string& choose)
         if(my_admin.check_pass())
         {
             my_admin.cmd_display(); //展示管理员界面
+            cin.sync();
             cin >> cmd;
             while(cmd != "7") //注销管理员
             {
@@ -214,6 +230,7 @@ void manage_choose_UI(string& choose)
         if(my_user.check_pass()) //登录成功则my_user表示确定的用户
         {
             my_user.display_cmd(); //展示用户主界面
+            cin.sync();
             cin >> cmd;
             while(cmd != "1") //1表示注销登录
             {
@@ -235,6 +252,7 @@ void manage_choose_UI(string& choose)
 
 int main() {
     //TODO: 对于输入时空格的处理(
+//    system("cls");
     MainWindow UI;
     string choose;
     //1.管理员登录 2.用户注册 3.用户登录 4.退出程序

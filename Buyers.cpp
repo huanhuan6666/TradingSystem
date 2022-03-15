@@ -52,6 +52,7 @@ void Buyers::buy_goods() {
     Commodity_t *get_it; //通过指针访问数组中的此商品
     while(true) {
         cout << "请输入要购买的商品ID: ";
+        cin.sync();
         cin >> com_id;
         for(auto& com : all_com){
             if(com.c_id == com_id && com.c_state == "销售中") { //商品ID存在则获取，注意用户只能看到销售中的产品！
@@ -163,6 +164,7 @@ OUT:
 void Buyers::search_goods() {
     string com_name, sql_cmd;
     cout << "请输入商品名称: ";
+    cin.sync();
     cin >> com_name;
     sql_cmd = "SELECT * FROM commodity WHERE 名称 CONTAINS " + com_name;
     cout << "对应SQL命令为: " << sql_cmd << endl;
@@ -172,6 +174,7 @@ void Buyers::search_goods() {
 void Buyers::display_good_info() {
     string com_id, sql_cmd;;
     cout << "请输入您想要查看的商品ID: ";
+    cin.sync();
     cin >> com_id;
     sql_cmd = "SELECT * FROM commodity WHERE 商品ID CONTAINS " + com_id;
     cout << "对应SQL命令为: " << sql_cmd << endl;
