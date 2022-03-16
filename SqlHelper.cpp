@@ -302,7 +302,6 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
                             fout << tmp;
                         } else if (tmp.m_id == values_res[5]) { //这个用户是卖家则余额增加
                             tmp.m_money += stof(values_res[2]) * (float) stoi(values_res[3]);
-                            balance = tmp.m_money;
                             fout << tmp;
                         } else { //这个人不是买家，或者买自己的产品则不需要修改直接写
                             fout << line << endl;

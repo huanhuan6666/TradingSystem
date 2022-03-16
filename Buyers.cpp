@@ -109,8 +109,8 @@ OUT:
         return;
     }
     else{ //修改数组中商品数量和自己的余额，其实没什么意义，比较SQL解析的时候只根据指令重新扫描文件
-        get_it->c_count -= q;
-        m_money -= (get_it->c_price) * (float)q;
+        //get_it->c_count -= q;
+        //m_money -= (get_it->c_price) * (float)q;
     }
 
     the_count = to_string(q); //获取购买数量字符串
