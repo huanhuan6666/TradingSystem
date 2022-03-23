@@ -11,7 +11,7 @@ using namespace std;
 void manage_choose_Buyer(string& cmd, Buyers& buyer)
 {
     cin.sync();
-//    system("cls");
+//    system("clear");
     if(cmd == "1") //查看商品列表
     {
         buyer.display_my_good();
@@ -41,7 +41,7 @@ void manage_choose_Buyer(string& cmd, Buyers& buyer)
 void manage_choose_Seller(string& cmd, Sellers& seller)
 {
     cin.sync();
-//    system("cls");
+//    system("clear");
     if(cmd == "1") //发布商品
     {
         seller.release_good();
@@ -72,7 +72,7 @@ void manage_choose_Seller(string& cmd, Sellers& seller)
 void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
     //1.查看信息 2.修改信息 3.充值 4.返回用户 5.计算器
     cin.sync();
-//    system("cls");
+//    system("clear");
     if (cmd == "1")
     {
         //TODO: 查看信息需要用到计算器算余额，实现计算器
@@ -98,7 +98,7 @@ void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
 void manage_choose_User(string& cmd, Users &my_user)
 {
     cin.sync();
-//    system("cls");
+//    system("clear");
     string choose;
     if(cmd == "2") //我是买家
     {
@@ -160,7 +160,7 @@ void manage_choose_Admin(string& cmd, Administrator &admin)
 {
 //1.查看所有商品 2.搜索商品 3.查看所有订单 4.查看所有用户 5.封禁用户 6.下架商品 7.注销
     cin.sync();
-//    system("cls");
+//    system("clear");
     if(cmd == "1") //查看所有商品
     {
         admin.display_all_goods();
@@ -195,7 +195,7 @@ void manage_choose_Admin(string& cmd, Administrator &admin)
 void manage_choose_UI(string& choose)
 {
     cin.sync();
-//    system("cls");
+//    system("clear");
     string cmd; //选择命令
     if(choose == "1") //管理员登录
     {
@@ -252,7 +252,7 @@ void manage_choose_UI(string& choose)
 
 int main() {
     //TODO: 对于输入时空格的处理(
-//    system("cls");
+//    system("clear");
     MainWindow UI;
     string choose;
     //1.管理员登录 2.用户注册 3.用户登录 4.退出程序

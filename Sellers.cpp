@@ -64,6 +64,10 @@ void Sellers::release_good() {
         cout << "请输入商品价格(保留一位小数): ";
         cin.sync();
         getline(cin, price);
+        if (price.empty()) {
+            cout << "输入不能为空！" << endl;
+            continue;
+        }
         int tmp_count = 0;
         bool flag = false;
         for (auto& c : price) {

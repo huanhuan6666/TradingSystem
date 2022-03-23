@@ -87,7 +87,7 @@ void InfoManager::display_my_info() {
             p_tmp.price = each[2];
             odr_map[each[3]].push_back(p_tmp);
         }
-        else if(each[6] == m_user.m_id) {//作为买家
+        if(each[6] == m_user.m_id) {//作为买家
             p_tmp.s = NEG;
             p_tmp.price = each[2];
             odr_map[each[3]].push_back(p_tmp);
@@ -195,7 +195,7 @@ void InfoManager::update_my_info() {
     fin.close(); //得到用户名池
 
     string choose;
-    cout << "请选择修改的属性(1.用户名  2.联系方式  3.地址): " ;
+    cout << "请选择修改的属性(1.用户名  2.联系方式  3.地址  4.密码): " ;
     cin.sync();
     cin >> choose;
 
@@ -285,6 +285,30 @@ void InfoManager::update_my_info() {
             break;
         }
         m_user.m_addr = addr;
+    }
+    else if(choose == "4"){
+        string pwd;
+        while(true){
+            cout << "请输入新密码(小写字母和数字不超过20个): ";
+            cin.sync();
+            cin >> pwd;
+            if(pwd.length() > 20){
+                cout << "密码不能超过20个字符!" << "这个长度: " << pwd.length() << endl;
+                continue;
+            }
+            bool flag = false;
+            for(auto c:pwd){
+                if(!isdigit(c) && !islower(c)) {
+                    cout << "密码中只能出现小写字母和数字！" << "出错字符: " << c << endl;
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag)
+                continue;
+            break;
+        }
+        m_user.m_pass = pwd;
     }
     else //异常输入
     {

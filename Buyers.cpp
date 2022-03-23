@@ -9,7 +9,7 @@ void Buyers::display_cmd() {
     cout << "===========================================================================" << endl;
     cout << "1.查看商品列表 2.购买商品 3.搜索商品 4.查看历史订单 5.查看商品详细信息 6.返回用户主界面" << endl;
     cout << "===========================================================================" << endl;
-    cout << endl << "输入操作: " ;
+    cout << endl << "输入操作: ";
 }
 
 Buyers::Buyers() {
@@ -19,13 +19,13 @@ Buyers::Buyers() {
 //通过User实例化Buyer，是因为设计框架将User派生出Buyer，main中User确定用户身份为Buyer后将调用该函数成为一个买家对象
 //在卖家类中也是如此
 Buyers::Buyers(Users &u) {
-    m_id    =  u.m_id   ;
-    m_name  =  u.m_name ;
-    m_pass  =  u.m_pass ;
-    m_tel   =  u.m_tel  ;
-    m_addr  =  u.m_addr ;
-    m_money =  u.m_money;
-    m_state =  u.m_state;
+    m_id = u.m_id;
+    m_name = u.m_name;
+    m_pass = u.m_pass;
+    m_tel = u.m_tel;
+    m_addr = u.m_addr;
+    m_money = u.m_money;
+    m_state = u.m_state;
     m_sql_helper.user_id = m_id;
     m_sql_helper.user_status = STATUS_BUYER;
 }
@@ -50,12 +50,12 @@ void Buyers::buy_goods() {
 
     string com_id, the_count, the_price, the_m_id;
     Commodity_t *get_it; //通过指针访问数组中的此商品
-    while(true) {
+    while (true) {
         cout << "请输入要购买的商品ID: ";
         cin.sync();
         cin >> com_id;
-        for(auto& com : all_com){
-            if(com.c_id == com_id && com.c_state == "销售中") { //商品ID存在则获取，注意用户只能看到销售中的产品！
+        for (auto &com: all_com) {
+            if (com.c_id == com_id && com.c_state == "销售中") { //商品ID存在则获取，注意用户只能看到销售中的产品！
                 get_it = &com;
                 ostringstream sout;
                 sout << setiosflags(ios::fixed);
@@ -66,49 +66,47 @@ void Buyers::buy_goods() {
             }
         }
         cout << "该商品ID当前不在销售！" << endl;
-        return ;
+        return;
     }
-OUT:
+    OUT:
     int q = 0;
-    while(true){
+    while (true) {
         cout << "请输入购买数量(正整数): ";
         cin.sync();
         getline(cin, the_count);
-        if(the_count.empty()){
+        if (the_count.empty()) {
             cout << "输入不能为空！" << endl;
             continue;
         }
         bool flag = false;
-        for(auto &c:the_count){
-            if(!isdigit(c) && c!=' ' || c=='.'){ //有小数点就报错
+        for (auto &c: the_count) {
+            if (!isdigit(c) && c != ' ' || c == '.') { //有小数点就报错
                 cout << "请输入正确的正整数！" << endl;
                 flag = true;
                 break;
             }
         }
-        if(flag){
+        if (flag) {
             continue;
         }
         try {
             q = stoi(the_count); //用串IO保留一位小数
             break;
         }
-        catch (invalid_argument&) {
+        catch (invalid_argument &) {
             cout << "请输入正确的正整数！" << endl;
         }
         catch (...) {
             cout << "其他异常！" << endl;
         }
     }
-    if(get_it->c_count < q) { //商品数量不够
+    if (get_it->c_count < q) { //商品数量不够
         cout << "此商品只剩余" << get_it->c_count << "个！" << endl;
-        return ;
-    }
-    else if ((get_it->c_price) * (float)q > m_money){ //余额不足
+        return;
+    } else if ((get_it->c_price) * (float) q > m_money) { //余额不足
         cout << "您的余额不足，仅剩" << m_money << "元" << endl;
         return;
-    }
-    else{ //修改数组中商品数量和自己的余额，其实没什么意义，比较SQL解析的时候只根据指令重新扫描文件
+    } else { //修改数组中商品数量和自己的余额，其实没什么意义，比较SQL解析的时候只根据指令重新扫描文件
         //get_it->c_count -= q;
         //m_money -= (get_it->c_price) * (float)q;
     }
@@ -134,24 +132,24 @@ OUT:
     //取id池中最大id + 1生成新的id, 用串IO实现3位编号补零
     ostringstream idout;
     string new_id;
-    if(odrid_pool.empty()){ //如果没有订单则T001
+    if (odrid_pool.empty()) { //如果没有订单则T001
         new_id = "T001";
-    }else {
+    } else {
         idout << setw(3) << setfill('0') << stoi((*odrid_pool.rbegin()).substr(1, 3)) + 1;
         new_id = "T" + idout.str();
     }
     //获取上架时间 年-月-日
     time_t t = time(nullptr);
-    char tmp[32] = { 0 };
+    char tmp[32] = {0};
     strftime(tmp, sizeof(tmp), "%Y-%m-%d", localtime(&t));
     string cur_time(tmp);
 
     string sql_cmd = "INSERT INTO order VALUES (" + new_id + "," + com_id + "," + the_price + ","
-                    + the_count + "," + cur_time + "," + the_m_id + "," + m_id + ")";
+                     + the_count + "," + cur_time + "," + the_m_id + "," + m_id + ")";
     cout << "对应SQL命令为: " << sql_cmd << endl;
     m_sql_helper.sql_analyse(sql_cmd);
 
-    if(get_it->c_count == q) //如果商品数量为0需要生成一条下架指令
+    if (get_it->c_count == q) //如果商品数量为0需要生成一条下架指令
     {
         //这里做了一步优化，在SqlHelper中如果发现商品数量为0就会捎带把状态设置成下架
         //也就是这个指令会生成，会写到指令文件，但是并没有交给SqlHelper再去分析执行，没必要重复工作
@@ -162,13 +160,187 @@ OUT:
 }
 
 void Buyers::search_goods() {
-    string com_name, sql_cmd;
-    cout << "请输入商品名称: ";
-    cin.sync();
-    cin >> com_name;
-    sql_cmd = "SELECT * FROM commodity WHERE 名称 CONTAINS " + com_name;
-    cout << "对应SQL命令为: " << sql_cmd << endl;
-    m_sql_helper.sql_analyse(sql_cmd);
+    string choose;
+    while (true) {
+        //注意买家只能看到销售中的商品
+        cout << "请输入想要搜索的属性: (1.商品ID 2.名称 3.价格 4.数量 5.卖家ID): ";
+        getline(cin, choose);
+        if (choose.empty()) {
+            cout << "输入不能为空！" << endl;
+            continue;
+        } else
+            break;
+    }
+    string option, value;
+    if (choose == "1") { //按照商品ID搜索
+        string ID;
+        while (true) {
+            cout << "请输入要搜索的商品ID: ";
+            getline(cin, ID);
+            if (ID.empty()) {
+                cout << "输入不能为空！" << endl;
+                continue;
+            } else
+                break;
+        }
+        option = "商品ID";
+        value = ID;
+
+    } else if (choose == "2") { //基础功能 利用sql指令按名称搜索
+        string com_name, sql_cmd;
+        cout << "请输入商品名称: ";
+        cin.sync();
+        cin >> com_name;
+        sql_cmd = "SELECT * FROM commodity WHERE 名称 CONTAINS " + com_name;
+        cout << "对应SQL命令为: " << sql_cmd << endl;
+        m_sql_helper.sql_analyse(sql_cmd);
+        return;
+    } else if (choose == "3") { //按照价格搜索
+        string price;
+        float p;
+        while(true){
+            cout << "请输入商品价格(保留一位小数): ";
+            cin.sync();
+            getline(cin, price);
+            if (price.empty()) {
+                cout << "输入不能为空！" << endl;
+                continue;
+            }
+            int tmp_count = 0;
+            bool flag = false;
+            for (auto& c : price) {
+                if (!isdigit(c) && c != ' ' && c != '.' || tmp_count > 1) {
+                    cout << "请输入正确的浮点数！" << endl;
+                    flag = true;
+                    break;
+                }
+                if (c == '.') tmp_count++;
+            }
+            if (flag) {
+                continue;
+            }
+            try {
+                p = stof(price); //用串IO保留一位小数
+                break;
+            }
+            catch (invalid_argument&) {
+                cout << "请输入正确的浮点数！" << endl;
+            }
+            catch (...) {
+                cout << "其他异常！" << endl;
+            }
+        }
+        ostringstream sout;
+        sout << setiosflags(ios::fixed);
+        sout << setprecision(1) << p;
+        price = sout.str();  //保留一位小数
+
+        option = "价格";
+        value = price;
+    } else if (choose == "4") { //数量
+        string count;
+        int q = 0;
+        while(true){
+            cout << "请输入商品数量(正整数): ";
+            cin.sync();
+            getline(cin, count);
+            if(count.empty()){
+                cout << "输入不能为空！" << endl;
+                continue;
+            }
+            bool flag = false;
+            for(auto &c:count){
+                if(!isdigit(c) && c!=' ' || c=='.'){ //有小数点就报错
+                    cout << "请输入正确的正整数！" << endl;
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag){
+                continue;
+            }
+            try {
+                q = stoi(count); //用串IO得到整数
+                break;
+            }
+            catch (invalid_argument&) {
+                cout << "请输入正确的正整数！" << endl;
+            }
+            catch (...) {
+                cout << "其他异常！" << endl;
+            }
+        }
+        count = to_string(q); //获取正整数的字符串
+        option = "数量";
+        value = count;
+    } else if (choose == "5") { //按照卖家ID搜索
+        string d;
+        while (true) {
+            cout << "请输入要搜索的商品ID: ";
+            getline(cin, d);
+            if (d.empty()) {
+                cout << "输入不能为空！" << endl;
+                continue;
+            } else
+                break;
+        }
+        option = "卖家ID";
+        value = d;
+    } else {
+        cout << "请输入上述展示功能对应的数字！" << endl;
+        return;
+    }
+
+
+    vector<Commodity_t> res;
+    ifstream fin(commodity_file);
+    if (!fin) {
+        cout << "Error: open file failed! " << commodity_file;
+        return;
+    }
+    string line;
+    getline(fin, line); //第一行表头
+    while (getline(fin, line)) {
+        vector<string> each;
+        my_split(line, ',', each); //用,分隔commodity文件中的每一行填充each
+        Commodity_t tmp(each);
+        if(tmp.c_state != "销售中") //买家只能看到销售中的商品！
+            continue;
+        if (option == "商品ID") {
+            if(tmp.c_id == value)
+                res.push_back(tmp);
+        } else if (option == "价格") {
+            if(tmp.c_price == stof(value))
+                res.push_back(tmp);
+        } else if (option == "数量") {
+            if(tmp.c_count == stoi(value))
+                res.push_back(tmp);
+        } else if (option == "卖家ID") {
+            if(tmp.m_id == value)
+                res.push_back(tmp);
+        } else {
+            cout << "正常情况不可能落到这里" << endl;
+        }
+    }
+    if(res.empty())
+    {
+        cout << "*****************************" << endl;
+        cout << "没有找到您想要的商品！返回初始界面" << endl;
+        cout << "*****************************" << endl;
+        fin.close();
+        return;
+    }
+    cout << endl << "*******************************************************************************************" << endl;
+    cout << internal;
+    cout << "商品ID     名称                 价格              上架时间           卖家ID    数量       商品状态" << endl;
+    for (const auto& com: res) {
+        cout << setiosflags(ios::fixed);
+        cout << left << setw(10) << com.c_id << left << setw(20) << com.c_name ;
+        cout << left << setw(15) << setprecision(1) << com.c_price << setw(20) << com.c_time << left << setw(10) << com.m_id << setw(10) << com.c_count << setw(10) << com.c_state << endl;
+    }
+    cout << "*******************************************************************************************" << endl;
+
+    fin.close();
 }
 
 void Buyers::display_good_info() {

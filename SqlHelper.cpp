@@ -345,7 +345,7 @@ void UserSqlHelper::sql_analyse(const string &cmd) {
                     if(tmp.c_id == values_res[1]) { //需要修改这个商品的数量
                         tmp.c_count -= stoi(values_res[3]);
                         if(tmp.c_count == 0) {//优化sql指令
-                            tmp.c_state = "下架";
+                            tmp.c_state = "已下架";
                         }
                         com_fout << tmp;
                     }else{ //不需要修改直接写
