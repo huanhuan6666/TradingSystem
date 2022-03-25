@@ -25,10 +25,36 @@ const string commands_file = "commands.txt";
 const string order_file = "order.txt";
 const string user_file = "user.txt";
 const string recharge_file = "recharge.txt";
+const string chat_file = "chatlog.txt";
 
 //一些状态，用在UserSqlHelper中区分买家卖家
 const int STATUS_SELLER = 3;
 const int STATUS_BUYER = 6;
+
+//聊天记录结构体
+struct Chat_t {
+    explicit Chat_t(vector<string> &each){
+        c_id = each[0];
+        sender = each[1];
+        receiver = each[2];
+        context = each[3];
+        c_time = each[4];
+        c_state = each[5];
+    }
+    string c_id; //聊天记录ID
+    string sender; //发送者ID
+    string receiver; //接收者ID
+    string context; //消息内容
+    string c_time; //记录时间
+    string c_state; //状态
+};
+
+inline ostream& operator<<(ostream& out, Chat_t& cht){
+    out << cht.c_id << "|" << cht.sender << "|" << cht.receiver << "|"
+    << cht.context << "|" << cht.c_time << "|" << cht.c_state << endl;
+
+    return out;
+}
 
 //商品和订单我们只关注其数据，因此表示成结构体就可以
 struct Order_t {

@@ -8,6 +8,8 @@
 class MainWindow {
 public:
     MainWindow();
+    void begin_show(); //开机界面
+    void end_show(); //关机界面
     void cmd_display();
     void register_user();
     void admin_login();

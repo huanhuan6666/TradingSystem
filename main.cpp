@@ -5,6 +5,7 @@
 #include "Buyers.h"
 #include "Sellers.h"
 #include "InfoManager.h"
+#include "ChatRoom.h"
 
 using namespace std;
 
@@ -75,7 +76,6 @@ void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
 //    system("clear");
     if (cmd == "1")
     {
-        //TODO: 查看信息需要用到计算器算余额，实现计算器
         info_mag.display_my_info();
     }
     else if (cmd == "2")
@@ -95,6 +95,29 @@ void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
         cout << "没有这个功能，请输入上述展示功能对应的数字!" << endl;
     }
 }
+
+void manage_choose_Chat(string& cmd, ChatRoom &chat_room){
+    //1.查看已发消息 2.查看收到的消息 3.发送消息 4.撤回消息 5.展示聊天记录
+    if(cmd == "1"){
+        chat_room.display_send();
+    }
+    else if(cmd == "2"){
+        chat_room.display_recv();
+    }
+    else if(cmd == "3"){
+        chat_room.send_message();
+    }
+    else if(cmd == "4"){
+        chat_room.widthdraw();
+    }
+    else if(cmd == "5"){
+        chat_room.display_log();
+    }
+    else{
+        cout << "没有这个功能，请输入上述展示功能对应的数字!" << endl;
+    }
+}
+
 void manage_choose_User(string& cmd, Users &my_user)
 {
     cin.sync();
@@ -148,6 +171,24 @@ void manage_choose_User(string& cmd, Users &my_user)
         }
 //        my_user = info_mag.m_user; //XXX更新user的信息！！！尤其重要！因为my_user并没有实时更新掉！
         //已经通过引用实时更新了！
+        cout << "您已经成功切换到用户主界面" << endl;
+    }
+    else if(cmd == "5") //聊天室
+    {
+        ChatRoom chat_room(my_user.m_id);
+        while(true){
+            chat_room.display_cmd();
+            getline(cin, choose);
+            if(choose.empty()){
+                cout << "输入不能为空！" << endl;
+                continue;
+            }
+            if(choose == "6")
+                break;
+            else{
+                manage_choose_Chat(choose, chat_room);
+            }
+        }
         cout << "您已经成功切换到用户主界面" << endl;
     }
     else //异常输入
@@ -243,6 +284,11 @@ void manage_choose_UI(string& choose)
         }
 
     }
+    else if(choose == "5")//计算器
+    {
+        Calculator my_cal;
+        my_cal.display();
+    }
     else // 非法输入
     {
         cout << "没有这个功能，请输入上述展示功能对应的数字!" << endl;
@@ -251,9 +297,9 @@ void manage_choose_UI(string& choose)
 }
 
 int main() {
-    //TODO: 对于输入时空格的处理(
 //    system("clear");
     MainWindow UI;
+    UI.begin_show(); //展示开机界面
     string choose;
     //1.管理员登录 2.用户注册 3.用户登录 4.退出程序
     UI.cmd_display(); //展示主界面菜单
@@ -265,8 +311,8 @@ int main() {
         cin.sync();
         cin >> choose;
     }
+    UI.end_show(); //展示关机界面
     cout << "您已经成功退出程序" << endl;
-
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }
