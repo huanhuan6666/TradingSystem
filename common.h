@@ -108,6 +108,22 @@ struct Commodity_t {
     string c_state; //商品状态
 };
 
+inline bool com_price_less(const Commodity_t& l, const Commodity_t& r){ //价格升序
+    return l.c_price < r.c_price;
+}
+
+inline bool com_price_greater(const Commodity_t& l, const Commodity_t& r){ //价格降序
+    return l.c_price > r.c_price;
+}
+
+inline bool com_count_less(const Commodity_t& l, const Commodity_t& r) { //数量升序
+    return l.c_count < r.c_count;
+}
+
+inline bool com_count_greater(const Commodity_t& l, const Commodity_t& r){ //数量降序
+    return l.c_count > r.c_count;
+}
+
 //重载Commodity_t的<<方便在文件中的输出
 inline ostream &operator<<(ostream &out, Commodity_t& com)
 {

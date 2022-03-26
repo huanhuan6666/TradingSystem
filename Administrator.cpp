@@ -6,6 +6,7 @@
 #include <iostream>
 #include "common.h"
 #include <iomanip>
+#include <algorithm>
 
 using namespace std;
 
@@ -15,9 +16,9 @@ Administrator::Administrator() {
 }
 
 void Administrator::cmd_display() {
-    cout << "=========================================================================" << endl;
-    cout << "1.查看所有商品 2.搜索商品 3.查看所有订单 4.查看所有用户 5.封禁用户 6.下架商品 7.注销" << endl;
-    cout << "=========================================================================" << endl;
+    cout << "\033[1;36m==============================================================================\033[0m" << endl;
+    cout << "\033[1;36m1.查看所有商品 2.搜索商品 3.查看所有订单 4.查看所有用户 5.封禁用户 6.下架商品 7.注销\033[0m" << endl;
+    cout << "\033[1;36m==============================================================================\033[0m" << endl;
     cout << endl << "请输入操作: ";
 }
 
@@ -34,6 +35,7 @@ void Administrator::search_goods() {
             break;
     }
     string option, value;
+    int type = 0; //升序降序和精确区分
     if (choose == "1") { //按照商品ID搜索
         string ID;
         while (true) {
@@ -58,83 +60,133 @@ void Administrator::search_goods() {
         m_sql_helper.sql_analyse(sql_cmd);
         return;
     } else if (choose == "3") { //按照价格搜索
-        string price;
-        float p;
-        while (true) {
-            cout << "请输入商品价格(保留一位小数): ";
-            cin.sync();
-            getline(cin, price);
-            if (price.empty()) {
+        string tmp_c;
+        while(true){
+            cout << "选择搜索方式:(1.升序排列 2.降序排列 3.精确搜索): ";
+            getline(cin, tmp_c);
+            if(tmp_c.empty()){
                 cout << "输入不能为空！" << endl;
                 continue;
             }
-            int tmp_count = 0;
-            bool flag = false;
-            for (auto &c: price) {
-                if (!isdigit(c) && c != ' ' && c != '.' || tmp_count > 1) {
+            if(tmp_c != "1" && tmp_c!= "2" && tmp_c!= "3"){
+                cout << "只能输入 1, 2, 3 这三种选择 "<<endl;
+                continue;
+            }
+            break;
+        }
+        if(tmp_c == "1"){ //升序排列
+            type = 1;
+            option = "价格";
+        }else if(tmp_c == "2"){ //降序排列
+            type = 2;
+            option = "价格";
+        }else if(tmp_c == "3"){ //精确搜索
+            type = 3;
+            string price;
+            float p;
+            while (true) {
+                cout << "请输入商品价格(保留一位小数): ";
+                cin.sync();
+                getline(cin, price);
+                if (price.empty()) {
+                    cout << "输入不能为空！" << endl;
+                    continue;
+                }
+                int tmp_count = 0;
+                bool flag = false;
+                for (auto &c: price) {
+                    if (!isdigit(c) && c != ' ' && c != '.' || tmp_count > 1) {
+                        cout << "请输入正确的浮点数！" << endl;
+                        flag = true;
+                        break;
+                    }
+                    if (c == '.') tmp_count++;
+                }
+                if (flag) {
+                    continue;
+                }
+                try {
+                    p = stof(price); //用串IO保留一位小数
+                    break;
+                }
+                catch (invalid_argument &) {
                     cout << "请输入正确的浮点数！" << endl;
-                    flag = true;
-                    break;
                 }
-                if (c == '.') tmp_count++;
+                catch (...) {
+                    cout << "其他异常！" << endl;
+                }
             }
-            if (flag) {
-                continue;
-            }
-            try {
-                p = stof(price); //用串IO保留一位小数
-                break;
-            }
-            catch (invalid_argument &) {
-                cout << "请输入正确的浮点数！" << endl;
-            }
-            catch (...) {
-                cout << "其他异常！" << endl;
-            }
-        }
-        ostringstream sout;
-        sout << setiosflags(ios::fixed);
-        sout << setprecision(1) << p;
-        price = sout.str();  //保留一位小数
+            ostringstream sout;
+            sout << setiosflags(ios::fixed);
+            sout << setprecision(1) << p;
+            price = sout.str();  //保留一位小数
 
-        option = "价格";
-        value = price;
+            option = "价格";
+            value = price;
+        }else{
+            cout << "不可能！" << endl;
+        }
     } else if (choose == "4") { //数量
-        string count;
-        int q = 0;
-        while (true) {
-            cout << "请输入商品数量(正整数): ";
-            cin.sync();
-            getline(cin, count);
-            if (count.empty()) {
+        string tmp_c;
+        while(true){
+            cout << "选择搜索方式:(1.升序排列 2.降序排列 3.精确搜索): ";
+            getline(cin, tmp_c);
+            if(tmp_c.empty()){
                 cout << "输入不能为空！" << endl;
                 continue;
             }
-            bool flag = false;
-            for (auto &c: count) {
-                if (!isdigit(c) && c != ' ' || c == '.') { //有小数点就报错
-                    cout << "请输入正确的正整数！" << endl;
-                    flag = true;
-                    break;
-                }
-            }
-            if (flag) {
+            if(tmp_c != "1" && tmp_c!= "2" && tmp_c!= "3"){
+                cout << "只能输入 1, 2, 3 这三种选择 "<<endl;
                 continue;
             }
-            try {
-                q = stoi(count); //用串IO得到整数
-                break;
-            }
-            catch (invalid_argument &) {
-                cout << "请输入正确的正整数！" << endl;
-            }
-            catch (...) {
-                cout << "其他异常！" << endl;
-            }
+            break;
         }
-        count = to_string(q); //获取正整数的字符串
-        option = "数量";
-        value = count;
+        if(tmp_c == "1"){
+            option = "数量";
+            type = 1;
+        }else if(tmp_c == "2"){
+            option = "数量";
+            type = 2;
+        }else if(tmp_c == "3") {
+            type = 3;
+            string count;
+            int q = 0;
+            while (true) {
+                cout << "请输入商品数量(正整数): ";
+                cin.sync();
+                getline(cin, count);
+                if (count.empty()) {
+                    cout << "输入不能为空！" << endl;
+                    continue;
+                }
+                bool flag = false;
+                for (auto &c: count) {
+                    if (!isdigit(c) && c != ' ' || c == '.') { //有小数点就报错
+                        cout << "请输入正确的正整数！" << endl;
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag) {
+                    continue;
+                }
+                try {
+                    q = stoi(count); //用串IO得到整数
+                    break;
+                }
+                catch (invalid_argument &) {
+                    cout << "请输入正确的正整数！" << endl;
+                }
+                catch (...) {
+                    cout << "其他异常！" << endl;
+                }
+            }
+            count = to_string(q); //获取正整数的字符串
+            option = "数量";
+            value = count;
+        }else{
+            cout << "不可能!" << endl;
+        }
     } else if (choose == "5") { //按照卖家ID搜索
         string d;
         while (true) {
@@ -192,10 +244,16 @@ void Administrator::search_goods() {
             if(tmp.c_id == value)
                 res.push_back(tmp);
         } else if (option == "价格") {
-            if(tmp.c_price == stof(value))
+            if(type == 3) {
+                if (tmp.c_price == stof(value))
+                    res.push_back(tmp);
+            }else //不是精确搜索就要展示所有
                 res.push_back(tmp);
         } else if (option == "数量") {
-            if(tmp.c_count == stoi(value))
+            if(type == 3) {
+                if (tmp.c_count == stoi(value))
+                    res.push_back(tmp);
+            }else //不是精确搜索就要展示所有
                 res.push_back(tmp);
         } else if (option == "卖家ID") {
             if(tmp.m_id == value)
@@ -215,6 +273,24 @@ void Administrator::search_goods() {
         cout << "*****************************" << endl;
         fin.close();
         return;
+    }
+    if(choose == "3"){ //按照价格
+        if(type == 1){ //按照价格升序
+            sort(res.begin(), res.end(), com_price_less);
+        }else if(type == 2){ //按价格降序
+            sort(res.begin(), res.end(), com_price_greater);
+        }else{
+            ;
+        }
+    }
+    if(choose == "4"){ //按照数量
+        if(type == 1) { //升序
+            sort(res.begin(), res.end(), com_count_less);
+        }else if(type == 2){ //降序
+            sort(res.begin(), res.end(), com_count_greater);
+        }else{
+            ;
+        }
     }
     cout << endl << "*******************************************************************************************" << endl;
     cout << internal;

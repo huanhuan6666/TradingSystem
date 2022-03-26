@@ -299,7 +299,7 @@ void manage_choose_UI(string& choose)
 int main() {
 //    system("clear");
     MainWindow UI;
-    UI.begin_show(); //展示开机界面
+//    UI.begin_show(); //展示开机界面
     string choose;
     //1.管理员登录 2.用户注册 3.用户登录 4.退出程序
     UI.cmd_display(); //展示主界面菜单
@@ -311,7 +311,7 @@ int main() {
         cin.sync();
         cin >> choose;
     }
-    UI.end_show(); //展示关机界面
+//    UI.end_show(); //展示关机界面
     cout << "您已经成功退出程序" << endl;
     std::cout << "Hello, World!" << std::endl;
     return 0;
