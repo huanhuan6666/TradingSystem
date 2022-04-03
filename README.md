@@ -3,4 +3,6 @@
 
 具体设计实现以及用户手册见目录`ppt`
 
-在Linux环境下直接make即可编译
+最终版本主要适配Linux环境，直接make即可编译，具体见`makefile`文件
+
+`.idea`忘了ignore了就是说，直接忽略
