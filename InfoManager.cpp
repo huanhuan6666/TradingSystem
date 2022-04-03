@@ -11,9 +11,9 @@
 using namespace std;
 
 void InfoManager::display_cmd() {
-    cout << "===============================================" << endl;
-    cout << "1.查看信息 2.修改信息 3.充值 4.返回用户主界面 5.计算器" << endl;
-    cout << "===============================================" << endl;
+    cout << "\033[1;36m===================================================\033[0m" << endl;
+    cout << "\033[1;36m1.查看信息 2.修改信息 3.充值 4.返回用户主界面 5.计算器\033[0m" << endl;
+    cout << "\033[1;36m===================================================\033[0m" << endl;
     cout << endl << "输入操作: " ;
 }
 
@@ -287,11 +287,14 @@ void InfoManager::update_my_info() {
         m_user.m_addr = addr;
     }
     else if(choose == "4"){
-        string pwd;
+        string pwd, again;
         while(true){
             cout << "请输入新密码(小写字母和数字不超过20个): ";
-            cin.sync();
-            cin >> pwd;
+            getline(cin, pwd);
+            if(pwd.empty()){
+                cout << "输入不能为空!" << endl;
+                continue;
+            }
             if(pwd.length() > 20){
                 cout << "密码不能超过20个字符!" << "这个长度: " << pwd.length() << endl;
                 continue;
@@ -306,6 +309,19 @@ void InfoManager::update_my_info() {
             }
             if(flag)
                 continue;
+            break;
+        }
+        while(true){
+            cout << "请再次输入新密码: ";
+            getline(cin, again);
+            if(again.empty()){
+                cout << "输入不能为空！" << endl;
+                continue;
+            }
+            if(again != pwd){
+                cout << "两次输入密码不一致！" << endl;
+                continue;
+            }
             break;
         }
         m_user.m_pass = pwd;

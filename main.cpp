@@ -12,7 +12,7 @@ using namespace std;
 void manage_choose_Buyer(string& cmd, Buyers& buyer)
 {
     cin.sync();
-//    system("clear");
+    system("clear");
     if(cmd == "1") //查看商品列表
     {
         buyer.display_my_good();
@@ -42,7 +42,7 @@ void manage_choose_Buyer(string& cmd, Buyers& buyer)
 void manage_choose_Seller(string& cmd, Sellers& seller)
 {
     cin.sync();
-//    system("clear");
+    system("clear");
     if(cmd == "1") //发布商品
     {
         seller.release_good();
@@ -73,7 +73,7 @@ void manage_choose_Seller(string& cmd, Sellers& seller)
 void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
     //1.查看信息 2.修改信息 3.充值 4.返回用户 5.计算器
     cin.sync();
-//    system("clear");
+    system("clear");
     if (cmd == "1")
     {
         info_mag.display_my_info();
@@ -98,6 +98,7 @@ void manage_choose_InfoManager(string &cmd, InfoManager &info_mag) {
 
 void manage_choose_Chat(string& cmd, ChatRoom &chat_room){
     //1.查看已发消息 2.查看收到的消息 3.发送消息 4.撤回消息 5.展示聊天记录
+    system("clear");
     if(cmd == "1"){
         chat_room.display_send();
     }
@@ -121,7 +122,7 @@ void manage_choose_Chat(string& cmd, ChatRoom &chat_room){
 void manage_choose_User(string& cmd, Users &my_user)
 {
     cin.sync();
-//    system("clear");
+    system("clear");
     string choose;
     if(cmd == "2") //我是买家
     {
@@ -201,7 +202,7 @@ void manage_choose_Admin(string& cmd, Administrator &admin)
 {
 //1.查看所有商品 2.搜索商品 3.查看所有订单 4.查看所有用户 5.封禁用户 6.下架商品 7.注销
     cin.sync();
-//    system("clear");
+    system("clear");
     if(cmd == "1") //查看所有商品
     {
         admin.display_all_goods();
@@ -236,7 +237,7 @@ void manage_choose_Admin(string& cmd, Administrator &admin)
 void manage_choose_UI(string& choose)
 {
     cin.sync();
-//    system("clear");
+    system("clear");
     string cmd; //选择命令
     if(choose == "1") //管理员登录
     {
@@ -297,9 +298,9 @@ void manage_choose_UI(string& choose)
 }
 
 int main() {
-//    system("clear");
+    system("clear");
     MainWindow UI;
-//    UI.begin_show(); //展示开机界面
+    UI.begin_show(); //展示开机界面
     string choose;
     //1.管理员登录 2.用户注册 3.用户登录 4.退出程序
     UI.cmd_display(); //展示主界面菜单
@@ -311,8 +312,8 @@ int main() {
         cin.sync();
         cin >> choose;
     }
-//    UI.end_show(); //展示关机界面
+    UI.end_show(); //展示关机界面
     cout << "您已经成功退出程序" << endl;
-    std::cout << "Hello, World!" << std::endl;
+    // std::cout << "Hello, World!" << std::endl;
     return 0;
 }
